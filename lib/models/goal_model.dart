@@ -80,4 +80,27 @@ class Goal {
         'status': status,
         'milestones': milestones.map((m) => m.toJson()).toList(),
       };
+
+  Goal copyWith({
+    String? id,
+    String? title,
+    String? description,
+    String? category,
+    String? targetDate,
+    int? progressPercentage,
+    String? status,
+    List<GoalMilestone>? milestones,
+  }) {
+    return Goal(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      category: category ?? this.category,
+      targetDate: targetDate ?? this.targetDate,
+      progressPercentage: progressPercentage ?? this.progressPercentage,
+      status: status ?? this.status,
+      milestones: milestones ?? this.milestones,
+    );
+  }
 }
+

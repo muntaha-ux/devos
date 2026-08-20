@@ -5,21 +5,70 @@ import '../../core/constants/app_colors.dart';
 import '../../models/course_model.dart';
 import '../../providers/app_providers.dart';
 import '../../widgets/badge_chip.dart';
+import 'add_edit_course_modal.dart';
 
 class CourseDetailScreen extends ConsumerWidget {
   final Course course;
 
   const CourseDetailScreen({super.key, required this.course});
 
+  void _showEditModal(BuildContext context, Course currentCourse) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => AddEditCourseModal(course: currentCourse),
+    );
+  }
+
+  void _confirmDelete(BuildContext context, WidgetRef ref, Course currentCourse) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Course'),
+        content: Text('Are you sure you want to delete "${currentCourse.name}"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.accentRose),
+            onPressed: () {
+              ref.read(coursesProvider.notifier).deleteCourse(currentCourse.id);
+              Navigator.pop(context); // Close dialog
+              Navigator.pop(context); // Back to courses list
+            },
+            child: const Text('Delete', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final courses = ref.watch(coursesProvider);
-    // Find current updated state for this course
-    final currentCourse = courses.firstWhere((c) => c.id == course.id, orElse: () => course);
+    final currentCourse = courses.firstWhere(
+      (c) => c.id == course.id,
+      orElse: () => course,
+    );
 
     return Scaffold(
       appBar: AppBar(
         title: Text(currentCourse.code),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit_outlined),
+            onPressed: () => _showEditModal(context, currentCourse),
+          ),
+          IconButton(
+            icon: const Icon(Icons.delete_outline, color: AppColors.accentRose),
+            onPressed: () => _confirmDelete(context, ref, currentCourse),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -87,7 +136,7 @@ class CourseDetailScreen extends ConsumerWidget {
                     const SizedBox(height: 8),
                     LinearPercentIndicator(
                       lineHeight: 8.0,
-                      percent: currentCourse.progressPercentage / 100.0,
+                      percent: currentCourse.topics.isEmpty ? 0 : currentCourse.progressPercentage / 100.0,
                       backgroundColor: AppColors.surfaceDark,
                       progressColor: AppColors.primary,
                       barRadius: const Radius.circular(4),

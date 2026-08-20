@@ -44,15 +44,24 @@ class Note {
         'created_at': createdAt.toIso8601String(),
       };
 
-  Note copyWith({bool? isFavorite}) {
+  Note copyWith({
+    String? id,
+    String? title,
+    String? content,
+    String? category,
+    bool? isFavorite,
+    List<String>? tags,
+    DateTime? createdAt,
+  }) {
     return Note(
-      id: id,
-      title: title,
-      content: content,
-      category: category,
+      id: id ?? this.id,
+      title: title ?? this.title,
+      content: content ?? this.content,
+      category: category ?? this.category,
       isFavorite: isFavorite ?? this.isFavorite,
-      tags: tags,
-      createdAt: createdAt,
+      tags: tags ?? this.tags,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 }
+

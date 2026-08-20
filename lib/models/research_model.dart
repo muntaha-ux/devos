@@ -50,4 +50,31 @@ class ResearchPaper {
         'status': status,
         'attachment_url': attachmentUrl,
       };
+
+  ResearchPaper copyWith({
+    String? id,
+    String? title,
+    String? authors,
+    int? publicationYear,
+    String? topic,
+    String? paperLink,
+    String? personalNotes,
+    String? keyFindings,
+    String? status,
+    String? attachmentUrl,
+  }) {
+    return ResearchPaper(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      authors: authors ?? this.authors,
+      publicationYear: publicationYear ?? this.publicationYear,
+      topic: topic ?? this.topic,
+      paperLink: paperLink ?? this.paperLink,
+      personalNotes: personalNotes ?? this.personalNotes,
+      keyFindings: keyFindings ?? this.keyFindings,
+      status: status ?? this.status,
+      attachmentUrl: attachmentUrl ?? this.attachmentUrl,
+    );
+  }
 }
+

@@ -78,19 +78,26 @@ class DevTask {
       };
 
   DevTask copyWith({
-    TaskStatus? status,
+    String? id,
+    String? title,
+    String? description,
+    String? category,
     TaskPriority? priority,
+    TaskStatus? status,
+    DateTime? dueDate,
+    String? relatedCourseName,
+    String? relatedProjectName,
   }) {
     return DevTask(
-      id: id,
-      title: title,
-      description: description,
-      category: category,
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      category: category ?? this.category,
       priority: priority ?? this.priority,
       status: status ?? this.status,
-      dueDate: dueDate,
-      relatedCourseName: relatedCourseName,
-      relatedProjectName: relatedProjectName,
+      dueDate: dueDate ?? this.dueDate,
+      relatedCourseName: relatedCourseName ?? this.relatedCourseName,
+      relatedProjectName: relatedProjectName ?? this.relatedProjectName,
     );
   }
 }

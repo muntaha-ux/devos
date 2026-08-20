@@ -71,4 +71,23 @@ class Skill {
         'progress_percentage': progressPercentage,
         'topics': topics.map((t) => t.toJson()).toList(),
       };
+
+  Skill copyWith({
+    String? id,
+    String? name,
+    String? category,
+    String? proficiencyLevel,
+    int? progressPercentage,
+    List<SkillTopic>? topics,
+  }) {
+    return Skill(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      category: category ?? this.category,
+      proficiencyLevel: proficiencyLevel ?? this.proficiencyLevel,
+      progressPercentage: progressPercentage ?? this.progressPercentage,
+      topics: topics ?? this.topics,
+    );
+  }
 }
+

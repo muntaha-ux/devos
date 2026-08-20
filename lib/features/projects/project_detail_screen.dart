@@ -5,20 +5,70 @@ import '../../core/constants/app_colors.dart';
 import '../../models/project_model.dart';
 import '../../providers/app_providers.dart';
 import '../../widgets/badge_chip.dart';
+import 'add_edit_project_modal.dart';
 
 class ProjectDetailScreen extends ConsumerWidget {
   final Project project;
 
   const ProjectDetailScreen({super.key, required this.project});
 
+  void _showEditModal(BuildContext context, Project currentProject) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => AddEditProjectModal(project: currentProject),
+    );
+  }
+
+  void _confirmDelete(BuildContext context, WidgetRef ref, Project currentProject) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Project'),
+        content: Text('Are you sure you want to delete "${currentProject.title}"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.accentRose),
+            onPressed: () {
+              ref.read(projectsProvider.notifier).deleteProject(currentProject.id);
+              Navigator.pop(context); // Close dialog
+              Navigator.pop(context); // Back to projects list
+            },
+            child: const Text('Delete', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final projects = ref.watch(projectsProvider);
-    final currentProject = projects.firstWhere((p) => p.id == project.id, orElse: () => project);
+    final currentProject = projects.firstWhere(
+      (p) => p.id == project.id,
+      orElse: () => project,
+    );
 
     return Scaffold(
       appBar: AppBar(
         title: Text(currentProject.title),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit_outlined),
+            onPressed: () => _showEditModal(context, currentProject),
+          ),
+          IconButton(
+            icon: const Icon(Icons.delete_outline, color: AppColors.accentRose),
+            onPressed: () => _confirmDelete(context, ref, currentProject),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -77,7 +127,7 @@ class ProjectDetailScreen extends ConsumerWidget {
                     const SizedBox(height: 8),
                     LinearPercentIndicator(
                       lineHeight: 8.0,
-                      percent: currentProject.progressPercentage / 100.0,
+                      percent: currentProject.milestones.isEmpty ? 0 : currentProject.progressPercentage / 100.0,
                       backgroundColor: AppColors.surfaceDark,
                       progressColor: AppColors.primary,
                       barRadius: const Radius.circular(4),

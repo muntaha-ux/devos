@@ -100,4 +100,33 @@ class Project {
         'progress_percentage': progressPercentage,
         'milestones': milestones.map((m) => m.toJson()).toList(),
       };
+
+  Project copyWith({
+    String? id,
+    String? title,
+    String? description,
+    List<String>? technologies,
+    String? githubUrl,
+    String? liveUrl,
+    String? startDate,
+    String? targetCompletionDate,
+    String? status,
+    int? progressPercentage,
+    List<ProjectMilestone>? milestones,
+  }) {
+    return Project(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      technologies: technologies ?? this.technologies,
+      githubUrl: githubUrl ?? this.githubUrl,
+      liveUrl: liveUrl ?? this.liveUrl,
+      startDate: startDate ?? this.startDate,
+      targetCompletionDate: targetCompletionDate ?? this.targetCompletionDate,
+      status: status ?? this.status,
+      progressPercentage: progressPercentage ?? this.progressPercentage,
+      milestones: milestones ?? this.milestones,
+    );
+  }
 }
+

@@ -83,4 +83,29 @@ class Course {
         'progress_percentage': progressPercentage,
         'topics': topics.map((t) => t.toJson()).toList(),
       };
+
+  Course copyWith({
+    String? id,
+    String? name,
+    String? code,
+    String? instructor,
+    double? creditHours,
+    String? description,
+    String? colorHex,
+    int? progressPercentage,
+    List<CourseTopic>? topics,
+  }) {
+    return Course(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      code: code ?? this.code,
+      instructor: instructor ?? this.instructor,
+      creditHours: creditHours ?? this.creditHours,
+      description: description ?? this.description,
+      colorHex: colorHex ?? this.colorHex,
+      progressPercentage: progressPercentage ?? this.progressPercentage,
+      topics: topics ?? this.topics,
+    );
+  }
 }
+

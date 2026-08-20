@@ -84,6 +84,14 @@ class CoursesNotifier extends StateNotifier<List<Course>> {
   void addCourse(Course course) {
     state = [...state, course];
   }
+
+  void updateCourse(Course updated) {
+    state = state.map((c) => c.id == updated.id ? updated : c).toList();
+  }
+
+  void deleteCourse(String courseId) {
+    state = state.where((c) => c.id != courseId).toList();
+  }
 }
 
 final coursesProvider = StateNotifierProvider<CoursesNotifier, List<Course>>((ref) {
@@ -124,6 +132,14 @@ class SkillsNotifier extends StateNotifier<List<Skill>> {
 
   void addSkill(Skill skill) {
     state = [...state, skill];
+  }
+
+  void updateSkill(Skill updated) {
+    state = state.map((s) => s.id == updated.id ? updated : s).toList();
+  }
+
+  void deleteSkill(String skillId) {
+    state = state.where((s) => s.id != skillId).toList();
   }
 }
 
@@ -171,6 +187,14 @@ class ProjectsNotifier extends StateNotifier<List<Project>> {
   void addProject(Project project) {
     state = [...state, project];
   }
+
+  void updateProject(Project updated) {
+    state = state.map((p) => p.id == updated.id ? updated : p).toList();
+  }
+
+  void deleteProject(String projectId) {
+    state = state.where((p) => p.id != projectId).toList();
+  }
 }
 
 final projectsProvider = StateNotifierProvider<ProjectsNotifier, List<Project>>((ref) {
@@ -195,6 +219,10 @@ class TasksNotifier extends StateNotifier<List<DevTask>> {
 
   void addTask(DevTask task) {
     state = [task, ...state];
+  }
+
+  void updateTask(DevTask updated) {
+    state = state.map((t) => t.id == updated.id ? updated : t).toList();
   }
 
   void deleteTask(String taskId) {
@@ -243,6 +271,14 @@ class GoalsNotifier extends StateNotifier<List<Goal>> {
   void addGoal(Goal goal) {
     state = [...state, goal];
   }
+
+  void updateGoal(Goal updated) {
+    state = state.map((g) => g.id == updated.id ? updated : g).toList();
+  }
+
+  void deleteGoal(String goalId) {
+    state = state.where((g) => g.id != goalId).toList();
+  }
 }
 
 final goalsProvider = StateNotifierProvider<GoalsNotifier, List<Goal>>((ref) {
@@ -265,6 +301,14 @@ class NotesNotifier extends StateNotifier<List<Note>> {
   void addNote(Note note) {
     state = [note, ...state];
   }
+
+  void updateNote(Note updated) {
+    state = state.map((n) => n.id == updated.id ? updated : n).toList();
+  }
+
+  void deleteNote(String noteId) {
+    state = state.where((n) => n.id != noteId).toList();
+  }
 }
 
 final notesProvider = StateNotifierProvider<NotesNotifier, List<Note>>((ref) {
@@ -278,6 +322,14 @@ class ResearchNotifier extends StateNotifier<List<ResearchPaper>> {
   void addPaper(ResearchPaper paper) {
     state = [paper, ...state];
   }
+
+  void updatePaper(ResearchPaper updated) {
+    state = state.map((p) => p.id == updated.id ? updated : p).toList();
+  }
+
+  void deletePaper(String paperId) {
+    state = state.where((p) => p.id != paperId).toList();
+  }
 }
 
 final researchProvider = StateNotifierProvider<ResearchNotifier, List<ResearchPaper>>((ref) {
@@ -290,6 +342,14 @@ class EventsNotifier extends StateNotifier<List<CalendarEvent>> {
 
   void addEvent(CalendarEvent event) {
     state = [...state, event];
+  }
+
+  void updateEvent(CalendarEvent updated) {
+    state = state.map((e) => e.id == updated.id ? updated : e).toList();
+  }
+
+  void deleteEvent(String eventId) {
+    state = state.where((e) => e.id != eventId).toList();
   }
 }
 

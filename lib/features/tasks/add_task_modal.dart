@@ -6,37 +6,67 @@ import '../../models/task_model.dart';
 import '../../providers/app_providers.dart';
 
 class AddTaskModal extends ConsumerStatefulWidget {
-  const AddTaskModal({super.key});
+  final DevTask? task;
+
+  const AddTaskModal({super.key, this.task});
 
   @override
   ConsumerState<AddTaskModal> createState() => _AddTaskModalState();
 }
 
 class _AddTaskModalState extends ConsumerState<AddTaskModal> {
-  final _titleController = TextEditingController();
-  final _descriptionController = TextEditingController();
-  String _category = 'general';
-  TaskPriority _priority = TaskPriority.medium;
+  late TextEditingController _titleController;
+  late TextEditingController _descriptionController;
+  late String _category;
+  late TaskPriority _priority;
+
+  @override
+  void initState() {
+    super.initState();
+    _titleController = TextEditingController(text: widget.task?.title ?? '');
+    _descriptionController = TextEditingController(text: widget.task?.description ?? '');
+    _category = widget.task?.category ?? 'general';
+    _priority = widget.task?.priority ?? TaskPriority.medium;
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
 
   void _submit() {
     if (_titleController.text.trim().isEmpty) return;
 
-    final newTask = DevTask(
-      id: const Uuid().v4(),
-      title: _titleController.text.trim(),
-      description: _descriptionController.text.trim(),
-      category: _category,
-      priority: _priority,
-      status: TaskStatus.pending,
-      dueDate: DateTime.now().add(const Duration(days: 2)),
-    );
+    if (widget.task == null) {
+      final newTask = DevTask(
+        id: const Uuid().v4(),
+        title: _titleController.text.trim(),
+        description: _descriptionController.text.trim(),
+        category: _category,
+        priority: _priority,
+        status: TaskStatus.pending,
+        dueDate: DateTime.now().add(const Duration(days: 2)),
+      );
+      ref.read(tasksProvider.notifier).addTask(newTask);
+    } else {
+      final updatedTask = widget.task!.copyWith(
+        title: _titleController.text.trim(),
+        description: _descriptionController.text.trim(),
+        category: _category,
+        priority: _priority,
+      );
+      ref.read(tasksProvider.notifier).updateTask(updatedTask);
+    }
 
-    ref.read(tasksProvider.notifier).addTask(newTask);
     Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
+    final isEditing = widget.task != null;
+
     return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -49,7 +79,7 @@ class _AddTaskModalState extends ConsumerState<AddTaskModal> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Create New Task',
+            isEditing ? 'Edit Task' : 'Create New Task',
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: 16),
@@ -74,7 +104,7 @@ class _AddTaskModalState extends ConsumerState<AddTaskModal> {
             children: [
               Expanded(
                 child: DropdownButtonFormField<String>(
-                  value: _category,
+                  initialValue: _category,
                   decoration: const InputDecoration(labelText: 'Category', border: OutlineInputBorder()),
                   items: const [
                     DropdownMenuItem(value: 'course', child: Text('Course')),
@@ -89,7 +119,7 @@ class _AddTaskModalState extends ConsumerState<AddTaskModal> {
               const SizedBox(width: 12),
               Expanded(
                 child: DropdownButtonFormField<TaskPriority>(
-                  value: _priority,
+                  initialValue: _priority,
                   decoration: const InputDecoration(labelText: 'Priority', border: OutlineInputBorder()),
                   items: const [
                     DropdownMenuItem(value: TaskPriority.low, child: Text('Low')),
@@ -110,7 +140,10 @@ class _AddTaskModalState extends ConsumerState<AddTaskModal> {
               foregroundColor: Colors.black,
               padding: const EdgeInsets.symmetric(vertical: 14),
             ),
-            child: const Text('Add Task', style: TextStyle(fontWeight: FontWeight.bold)),
+            child: Text(
+              isEditing ? 'Save Changes' : 'Add Task',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
           const SizedBox(height: 20),
         ],
