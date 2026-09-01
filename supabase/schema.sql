@@ -1,4 +1,4 @@
--- DevOS Supabase PostgreSQL Database Schema & RLS Policies
+-- DevOS Supabase PostgreSQL Database Schema, Storage & RLS Policies
 -- Complete schema for Personal Engineering & Academic Dashboard
 
 -- Enable UUID extension
@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS public.profiles (
     email TEXT NOT NULL,
     full_name TEXT,
     avatar_url TEXT,
-    institution TEXT,
+    bio TEXT DEFAULT 'Passionate Developer & Engineering Student',
+    institution TEXT DEFAULT 'University of Engineering & Technology',
     major TEXT DEFAULT 'Computer Science & Engineering',
     academic_year TEXT DEFAULT '3rd Year',
     learning_streak INTEGER DEFAULT 0,
@@ -18,6 +19,29 @@ CREATE TABLE IF NOT EXISTS public.profiles (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
+
+-- Automatic user creation trigger on auth.users insert
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.profiles (id, email, full_name, avatar_url)
+  VALUES (
+    new.id,
+    new.email,
+    COALESCE(new.raw_user_meta_data->>'full_name', 'Alex Vance'),
+    COALESCE(new.raw_user_meta_data->>'avatar_url', '')
+  )
+  ON CONFLICT (id) DO UPDATE SET
+    email = EXCLUDED.email,
+    updated_at = now();
+  RETURN new;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
 -- 2. COURSES
 CREATE TABLE IF NOT EXISTS public.courses (
@@ -273,7 +297,7 @@ ALTER TABLE public.learning_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.attachments ENABLE ROW LEVEL SECURITY;
 
--- Dynamic RLS Policy Generator (Allow User Access to Their Own Data)
+-- Dynamic RLS Policies
 CREATE POLICY "Users can manage their own profile" ON public.profiles FOR ALL USING (auth.uid() = id);
 CREATE POLICY "Users can manage their courses" ON public.courses FOR ALL USING (auth.uid() = user_id);
 CREATE POLICY "Users can manage course topics" ON public.course_topics FOR ALL USING (
@@ -304,3 +328,20 @@ CREATE POLICY "Users can manage events" ON public.events FOR ALL USING (auth.uid
 CREATE POLICY "Users can manage learning sessions" ON public.learning_sessions FOR ALL USING (auth.uid() = user_id);
 CREATE POLICY "Users can manage notifications" ON public.notifications FOR ALL USING (auth.uid() = user_id);
 CREATE POLICY "Users can manage attachments" ON public.attachments FOR ALL USING (auth.uid() = user_id);
+
+-- STORAGE BUCKETS & RLS POLICIES FOR AVATARS & ATTACHMENTS
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('avatars', 'avatars', true)
+ON CONFLICT (id) DO NOTHING;
+
+CREATE POLICY "Avatar images are publicly accessible" ON storage.objects
+  FOR SELECT USING (bucket_id = 'avatars');
+
+CREATE POLICY "Users can upload avatar images" ON storage.objects
+  FOR INSERT WITH CHECK (bucket_id = 'avatars' AND auth.uid()::text = (storage.foldername(name))[1]);
+
+CREATE POLICY "Users can update their own avatar images" ON storage.objects
+  FOR UPDATE USING (bucket_id = 'avatars' AND auth.uid()::text = (storage.foldername(name))[1]);
+
+CREATE POLICY "Users can delete their own avatar images" ON storage.objects
+  FOR DELETE USING (bucket_id = 'avatars' AND auth.uid()::text = (storage.foldername(name))[1]);
