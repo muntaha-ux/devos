@@ -10,6 +10,9 @@ class MainFlutterWindow: NSWindow {
 
     RegisterGeneratedPlugins(registry: flutterViewController)
 
+    // DevOS is a single-theme light app; lock appearance to Aqua
+    self.appearance = NSAppearance(named: .aqua)
+
     super.awakeFromNib()
   }
 }

@@ -1,12 +1,10 @@
+// ignore_for_file: avoid_print
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:devos/core/theme/app_theme.dart';
 import 'package:devos/features/auth/login_screen.dart';
 import 'package:devos/features/dashboard/dashboard_screen.dart';
-import 'package:devos/features/courses/courses_screen.dart';
-import 'package:devos/features/skills/skills_screen.dart';
-import 'package:devos/features/projects/projects_screen.dart';
 import 'package:devos/features/workload/workload_screen.dart';
 import 'package:devos/features/notes/notes_screen.dart';
 

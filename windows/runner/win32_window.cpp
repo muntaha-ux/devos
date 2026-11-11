@@ -281,7 +281,8 @@ void Win32Window::UpdateTheme(HWND const window) {
                                &light_mode_size);
 
   if (result == ERROR_SUCCESS) {
-    BOOL enable_dark_mode = light_mode == 0;
+    // DevOS is a light-only application; enforce light window chrome.
+    BOOL enable_dark_mode = FALSE;
     DwmSetWindowAttribute(window, DWMWA_USE_IMMERSIVE_DARK_MODE,
                           &enable_dark_mode, sizeof(enable_dark_mode));
   }
