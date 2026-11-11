@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
+
 import '../../core/constants/app_colors.dart';
 import '../../models/project_model.dart';
 import '../../providers/app_providers.dart';
@@ -11,7 +12,8 @@ class AddEditProjectModal extends ConsumerStatefulWidget {
   const AddEditProjectModal({super.key, this.project});
 
   @override
-  ConsumerState<AddEditProjectModal> createState() => _AddEditProjectModalState();
+  ConsumerState<AddEditProjectModal> createState() =>
+      _AddEditProjectModalState();
 }
 
 class _AddEditProjectModalState extends ConsumerState<AddEditProjectModal> {
@@ -26,10 +28,18 @@ class _AddEditProjectModalState extends ConsumerState<AddEditProjectModal> {
   void initState() {
     super.initState();
     _titleController = TextEditingController(text: widget.project?.title ?? '');
-    _descriptionController = TextEditingController(text: widget.project?.description ?? '');
-    _techController = TextEditingController(text: widget.project?.technologies.join(', ') ?? '');
-    _githubController = TextEditingController(text: widget.project?.githubUrl ?? '');
-    _liveUrlController = TextEditingController(text: widget.project?.liveUrl ?? '');
+    _descriptionController = TextEditingController(
+      text: widget.project?.description ?? '',
+    );
+    _techController = TextEditingController(
+      text: widget.project?.technologies.join(', ') ?? '',
+    );
+    _githubController = TextEditingController(
+      text: widget.project?.githubUrl ?? '',
+    );
+    _liveUrlController = TextEditingController(
+      text: widget.project?.liveUrl ?? '',
+    );
 
     if (widget.project != null && widget.project!.milestones.isNotEmpty) {
       _milestoneControllers = widget.project!.milestones
@@ -65,12 +75,14 @@ class _AddEditProjectModalState extends ConsumerState<AddEditProjectModal> {
 
     final milestones = _milestoneControllers
         .where((c) => c.text.trim().isNotEmpty)
-        .map((c) => ProjectMilestone(
-              id: const Uuid().v4(),
-              title: c.text.trim(),
-              targetDate: '2026-10-01',
-              isCompleted: false,
-            ))
+        .map(
+          (c) => ProjectMilestone(
+            id: const Uuid().v4(),
+            title: c.text.trim(),
+            targetDate: '2026-10-01',
+            isCompleted: false,
+          ),
+        )
         .toList();
 
     if (widget.project == null) {
@@ -95,7 +107,9 @@ class _AddEditProjectModalState extends ConsumerState<AddEditProjectModal> {
         technologies: tech,
         githubUrl: _githubController.text.trim(),
         liveUrl: _liveUrlController.text.trim(),
-        milestones: milestones.isNotEmpty ? milestones : widget.project!.milestones,
+        milestones: milestones.isNotEmpty
+            ? milestones
+            : widget.project!.milestones,
       );
       ref.read(projectsProvider.notifier).updateProject(updated);
     }
@@ -127,7 +141,7 @@ class _AddEditProjectModalState extends ConsumerState<AddEditProjectModal> {
             TextField(
               controller: _titleController,
               decoration: const InputDecoration(
-                labelText: 'Project Title',
+                labelText: 'Project Name',
                 border: OutlineInputBorder(),
               ),
             ),
@@ -144,7 +158,8 @@ class _AddEditProjectModalState extends ConsumerState<AddEditProjectModal> {
             TextField(
               controller: _techController,
               decoration: const InputDecoration(
-                labelText: 'Technologies (comma separated, e.g. Flutter, Supabase)',
+                labelText:
+                    'Technologies (comma separated, e.g. Flutter, Supabase)',
                 border: OutlineInputBorder(),
               ),
             ),
@@ -176,7 +191,10 @@ class _AddEditProjectModalState extends ConsumerState<AddEditProjectModal> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Milestones', style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text(
+                  'Milestones',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 IconButton(
                   icon: const Icon(Icons.add_circle, color: AppColors.primary),
                   onPressed: () {
@@ -206,7 +224,10 @@ class _AddEditProjectModalState extends ConsumerState<AddEditProjectModal> {
                     ),
                     if (_milestoneControllers.length > 1)
                       IconButton(
-                        icon: const Icon(Icons.remove_circle_outline, color: AppColors.accentRose),
+                        icon: const Icon(
+                          Icons.remove_circle_outline,
+                          color: AppColors.accentRose,
+                        ),
                         onPressed: () {
                           setState(() {
                             _milestoneControllers.removeAt(index);

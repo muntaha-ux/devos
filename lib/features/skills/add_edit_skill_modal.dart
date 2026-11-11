@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
+
 import '../../core/constants/app_colors.dart';
 import '../../models/skill_model.dart';
 import '../../providers/app_providers.dart';
@@ -51,11 +52,13 @@ class _AddEditSkillModalState extends ConsumerState<AddEditSkillModal> {
 
     final topics = _topicControllers
         .where((c) => c.text.trim().isNotEmpty)
-        .map((c) => SkillTopic(
-              id: const Uuid().v4(),
-              title: c.text.trim(),
-              isCompleted: false,
-            ))
+        .map(
+          (c) => SkillTopic(
+            id: const Uuid().v4(),
+            title: c.text.trim(),
+            isCompleted: false,
+          ),
+        )
         .toList();
 
     if (widget.skill == null) {
@@ -115,11 +118,23 @@ class _AddEditSkillModalState extends ConsumerState<AddEditSkillModal> {
                 Expanded(
                   child: DropdownButtonFormField<String>(
                     initialValue: _category,
-                    decoration: const InputDecoration(labelText: 'Category', border: OutlineInputBorder()),
+                    decoration: const InputDecoration(
+                      labelText: 'Category',
+                      border: OutlineInputBorder(),
+                    ),
                     items: const [
-                      DropdownMenuItem(value: 'Development', child: Text('Development')),
-                      DropdownMenuItem(value: 'AI / ML', child: Text('AI / ML')),
-                      DropdownMenuItem(value: 'Systems', child: Text('Systems')),
+                      DropdownMenuItem(
+                        value: 'Development',
+                        child: Text('Development'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'AI / ML',
+                        child: Text('AI / ML'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Systems',
+                        child: Text('Systems'),
+                      ),
                       DropdownMenuItem(value: 'Design', child: Text('Design')),
                       DropdownMenuItem(value: 'DevOps', child: Text('DevOps')),
                     ],
@@ -130,14 +145,27 @@ class _AddEditSkillModalState extends ConsumerState<AddEditSkillModal> {
                 Expanded(
                   child: DropdownButtonFormField<String>(
                     initialValue: _proficiencyLevel,
-                    decoration: const InputDecoration(labelText: 'Proficiency', border: OutlineInputBorder()),
+                    decoration: const InputDecoration(
+                      labelText: 'Proficiency',
+                      border: OutlineInputBorder(),
+                    ),
                     items: const [
-                      DropdownMenuItem(value: 'Beginner', child: Text('Beginner')),
-                      DropdownMenuItem(value: 'Intermediate', child: Text('Intermediate')),
-                      DropdownMenuItem(value: 'Advanced', child: Text('Advanced')),
+                      DropdownMenuItem(
+                        value: 'Beginner',
+                        child: Text('Beginner'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Intermediate',
+                        child: Text('Intermediate'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'Advanced',
+                        child: Text('Advanced'),
+                      ),
                       DropdownMenuItem(value: 'Expert', child: Text('Expert')),
                     ],
-                    onChanged: (val) => setState(() => _proficiencyLevel = val!),
+                    onChanged: (val) =>
+                        setState(() => _proficiencyLevel = val!),
                   ),
                 ),
               ],
@@ -146,9 +174,15 @@ class _AddEditSkillModalState extends ConsumerState<AddEditSkillModal> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Core Topics & Competencies', style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text(
+                  'Core Topics & Competencies',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 IconButton(
-                  icon: const Icon(Icons.add_circle, color: AppColors.secondary),
+                  icon: const Icon(
+                    Icons.add_circle,
+                    color: AppColors.secondary,
+                  ),
                   onPressed: () {
                     setState(() {
                       _topicControllers.add(TextEditingController());
@@ -176,7 +210,10 @@ class _AddEditSkillModalState extends ConsumerState<AddEditSkillModal> {
                     ),
                     if (_topicControllers.length > 1)
                       IconButton(
-                        icon: const Icon(Icons.remove_circle_outline, color: AppColors.accentRose),
+                        icon: const Icon(
+                          Icons.remove_circle_outline,
+                          color: AppColors.accentRose,
+                        ),
                         onPressed: () {
                           setState(() {
                             _topicControllers.removeAt(index);

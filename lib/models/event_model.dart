@@ -24,18 +24,20 @@ class CalendarEvent {
       startTime: json['start_time'] != null
           ? DateTime.parse(json['start_time'])
           : DateTime.now(),
-      endTime: json['end_time'] != null ? DateTime.parse(json['end_time']) : null,
+      endTime: json['end_time'] != null
+          ? DateTime.parse(json['end_time'])
+          : null,
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': title,
-        'description': description,
-        'event_type': eventType,
-        'start_time': startTime.toIso8601String(),
-        'end_time': endTime?.toIso8601String(),
-      };
+    'id': id,
+    'title': title,
+    'description': description,
+    'event_type': eventType,
+    'start_time': startTime.toIso8601String(),
+    'end_time': endTime?.toIso8601String(),
+  };
 
   CalendarEvent copyWith({
     String? id,
@@ -55,4 +57,3 @@ class CalendarEvent {
     );
   }
 }
-

@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../core/constants/app_colors.dart';
 import '../../models/course_model.dart';
 import '../../providers/app_providers.dart';
-import '../../widgets/badge_chip.dart';
 import 'add_edit_course_modal.dart';
 import 'course_detail_screen.dart';
 
-class CoursesScreen extends ConsumerWidget {
+class CoursesScreen extends ConsumerStatefulWidget {
   const CoursesScreen({super.key});
 
+  @override
+  ConsumerState<CoursesScreen> createState() => _CoursesScreenState();
+}
+
+class _CoursesScreenState extends ConsumerState<CoursesScreen> {
+  int _selectedCourseIndex = 0;
+
   void _showAddEditModal(BuildContext context, [Course? course]) {
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
@@ -22,157 +28,433 @@ class CoursesScreen extends ConsumerWidget {
     );
   }
 
-  void _confirmDelete(BuildContext context, WidgetRef ref, Course course) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Delete Course'),
-        content: Text('Are you sure you want to delete "${course.name}"?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.accentRose),
-            onPressed: () {
-              ref.read(coursesProvider.notifier).deleteCourse(course.id);
-              Navigator.pop(context);
-            },
-            child: const Text('Delete', style: TextStyle(color: Colors.white)),
-          ),
-        ],
+  @override
+  Widget build(BuildContext context) {
+    final isDark = AppColors.isDark(context);
+    final courses = ref.watch(coursesProvider);
+
+    // Safeguard index
+    if (_selectedCourseIndex >= courses.length && courses.isNotEmpty) {
+      _selectedCourseIndex = 0;
+    }
+
+    final activeCourse = courses.isNotEmpty ? courses[_selectedCourseIndex] : null;
+
+    return Container(
+      color: AppColors.background(context),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Screen Title & Term
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Syllabus',
+                      style: GoogleFonts.inter(
+                        color: AppColors.textHeading(context),
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Academic Term 2026',
+                      style: GoogleFonts.jetBrainsMono(
+                        color: AppColors.textSecondary(context),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+                ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isDark ? const Color(0xFF2E6316) : AppColors.figmaForestBanner,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    elevation: 0,
+                  ),
+                  onPressed: () => _showAddEditModal(context),
+                  icon: const Icon(Icons.add, size: 16),
+                  label: Text(
+                    'Add Course',
+                    style: GoogleFonts.jetBrainsMono(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+
+            // Course Selector Pills (Multi-Course Support)
+            if (courses.length > 1) ...[
+              SizedBox(
+                height: 38,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: courses.length,
+                  itemBuilder: (context, index) {
+                    final c = courses[index];
+                    final isSelected = index == _selectedCourseIndex;
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: InkWell(
+                        onTap: () => setState(() => _selectedCourseIndex = index),
+                        borderRadius: BorderRadius.circular(8),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? (isDark ? const Color(0xFF7C3AED) : AppColors.figmaPurpleCard)
+                                : (isDark ? const Color(0xFF1E2433) : Colors.white),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: isSelected
+                                  ? Colors.transparent
+                                  : (isDark ? const Color(0xFF384358) : const Color(0xFF333333)),
+                              width: 1,
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              c.code,
+                              style: GoogleFonts.jetBrainsMono(
+                                color: isSelected ? Colors.white : (isDark ? Colors.white70 : Colors.black87),
+                                fontSize: 12,
+                                fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 14),
+            ],
+
+            // Featured / Active Course Card
+            if (activeCourse != null)
+              InkWell(
+                onTap: () {
+                  Navigator.push<void>(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (context) => CourseDetailScreen(course: activeCourse),
+                    ),
+                  );
+                },
+                borderRadius: BorderRadius.circular(16),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(18.0),
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF2D1B4E) : AppColors.figmaPurpleCard,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: isDark ? const Color(0xFF6B21A8) : const Color(0xFF333333),
+                      width: 1,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Top row: Course Code & Test Badge
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withValues(alpha: 0.25),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              activeCourse.code,
+                              style: GoogleFonts.jetBrainsMono(
+                                color: const Color(0xFFD6BCFA),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
+                            ),
+                            child: Row(
+                              children: [
+                                const Text('• ', style: TextStyle(color: Color(0xFFFBBF24), fontSize: 10)),
+                                Text(
+                                  '${activeCourse.creditHours} Credits',
+                                  style: GoogleFonts.jetBrainsMono(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      // Course Title
+                      Text(
+                        activeCourse.name,
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          height: 1.2,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      // Instructor
+                      Row(
+                        children: [
+                          const Icon(Icons.person_outline, size: 14, color: Color(0xFFDDD6FE)),
+                          const SizedBox(width: 6),
+                          Text(
+                            activeCourse.instructor.isNotEmpty ? activeCourse.instructor : 'Instructor Assigned',
+                            style: GoogleFonts.inter(
+                              color: const Color(0xFFEDE9FE),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Container(
+                        width: 80,
+                        height: 2,
+                        color: Colors.white.withValues(alpha: 0.35),
+                      ),
+                      const SizedBox(height: 14),
+                      // Progress Header
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Syllabus Completed',
+                            style: GoogleFonts.jetBrainsMono(
+                              color: const Color(0xFFEDE9FE),
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Text(
+                            '${activeCourse.progressPercentage}%',
+                            style: GoogleFonts.jetBrainsMono(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      // Progress Bar
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(3),
+                        child: SizedBox(
+                          height: 5,
+                          child: Stack(
+                            children: [
+                              Container(color: const Color(0xFF222222)),
+                              FractionallySizedBox(
+                                widthFactor: activeCourse.progressPercentage.clamp(0, 100) / 100.0,
+                                child: Container(color: AppColors.figmaPink),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            else
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(24.0),
+                decoration: BoxDecoration(
+                  color: AppColors.card(context),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: AppColors.cardBorder(context)),
+                ),
+                child: Column(
+                  children: [
+                    const Icon(Icons.school_outlined, size: 48, color: Colors.grey),
+                    const SizedBox(height: 12),
+                    Text(
+                      'No Courses Enrolled',
+                      style: GoogleFonts.inter(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary(context),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Add your university syllabus to track topics and exams.',
+                      style: GoogleFonts.inter(
+                        fontSize: 13,
+                        color: AppColors.textSecondary(context),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+            const SizedBox(height: 24),
+
+            // Topics Outline Section
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Topics Outline',
+                  style: GoogleFonts.inter(
+                    color: isDark ? const Color(0xFFF472B6) : AppColors.figmaTextRed,
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                if (activeCourse != null)
+                  Text(
+                    '${activeCourse.topics.where((t) => t.isCompleted).length}/${activeCourse.topics.length} Done',
+                    style: GoogleFonts.jetBrainsMono(
+                      color: AppColors.textSecondary(context),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            Divider(color: isDark ? const Color(0xFF384358) : const Color(0xFFA69090), thickness: 1),
+            const SizedBox(height: 12),
+
+            // Real dynamic topic checklist
+            if (activeCourse != null && activeCourse.topics.isNotEmpty) ...[
+              ...activeCourse.topics.asMap().entries.map((entry) {
+                final index = entry.key;
+                final topic = entry.value;
+                final isAlt = index % 2 == 1;
+
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 12.0),
+                  child: InkWell(
+                    onTap: () {
+                      ref.read(coursesProvider.notifier).toggleTopic(activeCourse.id, topic.id);
+                    },
+                    borderRadius: BorderRadius.circular(10),
+                    child: _buildTopicCard(
+                      context: context,
+                      title: topic.title,
+                      isCompleted: topic.isCompleted,
+                      backgroundColor: isDark
+                          ? (isAlt ? const Color(0xFF1E2822) : const Color(0xFF26271A))
+                          : (isAlt ? AppColors.figmaOliveTopic : AppColors.figmaGreenTopic),
+                      borderColor: isDark
+                          ? (isAlt ? const Color(0xFF3F6212) : const Color(0xFF065F46))
+                          : const Color(0xFF333333),
+                    ),
+                  ),
+                );
+              }),
+            ] else if (activeCourse != null) ...[
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20.0),
+                decoration: BoxDecoration(
+                  color: AppColors.card(context),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: AppColors.cardBorder(context)),
+                ),
+                child: Center(
+                  child: Text(
+                    'No topics outlined yet for ${activeCourse.code}.\nEdit course to add syllabus topics.',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.inter(color: AppColors.textSecondary(context), fontSize: 13),
+                  ),
+                ),
+              ),
+            ],
+
+            const SizedBox(height: 20),
+          ],
+        ),
       ),
     );
   }
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final courses = ref.watch(coursesProvider);
-
-    return Scaffold(
-      body: courses.isEmpty
-          ? const Center(child: Text('No courses added yet.'))
-          : ListView.builder(
-              padding: const EdgeInsets.all(16.0),
-              itemCount: courses.length,
-              itemBuilder: (context, index) {
-                final course = courses[index];
-                final completedTopics = course.topics.where((t) => t.isCompleted).length;
-
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 14),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(12),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CourseDetailScreen(course: course),
-                        ),
-                      );
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              BadgeChip(
-                                label: course.code,
-                                color: AppColors.primary,
-                              ),
-                              Row(
-                                children: [
-                                  Text(
-                                    '${course.creditHours} Credits',
-                                    style: const TextStyle(color: AppColors.textMutedDark, fontSize: 12),
-                                  ),
-                                  PopupMenuButton<String>(
-                                    icon: const Icon(Icons.more_vert, size: 20, color: AppColors.textMutedDark),
-                                    onSelected: (val) {
-                                      if (val == 'edit') {
-                                        _showAddEditModal(context, course);
-                                      } else if (val == 'delete') {
-                                        _confirmDelete(context, ref, course);
-                                      }
-                                    },
-                                    itemBuilder: (context) => [
-                                      const PopupMenuItem(
-                                        value: 'edit',
-                                        child: Row(
-                                          children: [
-                                            Icon(Icons.edit, size: 18),
-                                            SizedBox(width: 8),
-                                            Text('Edit'),
-                                          ],
-                                        ),
-                                      ),
-                                      const PopupMenuItem(
-                                        value: 'delete',
-                                        child: Row(
-                                          children: [
-                                            Icon(Icons.delete, size: 18, color: AppColors.accentRose),
-                                            SizedBox(width: 8),
-                                            Text('Delete', style: TextStyle(color: AppColors.accentRose)),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            course.name,
-                            style: Theme.of(context).textTheme.titleLarge,
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Instructor: ${course.instructor}',
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                          const SizedBox(height: 12),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                '$completedTopics / ${course.topics.length} Topics Completed',
-                                style: const TextStyle(fontSize: 12, color: AppColors.textMutedDark),
-                              ),
-                              Text(
-                                '${course.progressPercentage}%',
-                                style: const TextStyle(
-                                  color: AppColors.primary,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 13,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          LinearPercentIndicator(
-                            lineHeight: 6.0,
-                            percent: course.topics.isEmpty ? 0 : course.progressPercentage / 100.0,
-                            backgroundColor: AppColors.surfaceDark,
-                            progressColor: AppColors.primary,
-                            barRadius: const Radius.circular(4),
-                            padding: EdgeInsets.zero,
-                          ),
-                        ],
-                      ),
-                    ),
+  Widget _buildTopicCard({
+    required BuildContext context,
+    required String title,
+    required bool isCompleted,
+    required Color backgroundColor,
+    required Color borderColor,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: borderColor, width: 1),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            isCompleted ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
+            color: isCompleted ? const Color(0xFFA7F3D0) : Colors.white70,
+            size: 22,
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    decoration: isCompleted ? TextDecoration.lineThrough : null,
                   ),
-                );
-              },
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  isCompleted ? '• COMPLETED' : '• IN PROGRESS',
+                  style: GoogleFonts.jetBrainsMono(
+                    color: isCompleted ? const Color(0xFFA7F3D0) : const Color(0xFFFEF08A),
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _showAddEditModal(context),
-        child: const Icon(Icons.add),
+          ),
+        ],
       ),
     );
   }

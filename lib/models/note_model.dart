@@ -35,14 +35,14 @@ class Note {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': title,
-        'content': content,
-        'category': category,
-        'is_favorite': isFavorite,
-        'tags': tags,
-        'created_at': createdAt.toIso8601String(),
-      };
+    'id': id,
+    'title': title,
+    'content': content,
+    'category': category,
+    'is_favorite': isFavorite,
+    'tags': tags,
+    'created_at': createdAt.toIso8601String(),
+  };
 
   Note copyWith({
     String? id,
@@ -64,4 +64,3 @@ class Note {
     );
   }
 }
-

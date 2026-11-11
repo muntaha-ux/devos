@@ -39,17 +39,17 @@ class ResearchPaper {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': title,
-        'authors': authors,
-        'publication_year': publicationYear,
-        'topic': topic,
-        'paper_link': paperLink,
-        'personal_notes': personalNotes,
-        'key_findings': keyFindings,
-        'status': status,
-        'attachment_url': attachmentUrl,
-      };
+    'id': id,
+    'title': title,
+    'authors': authors,
+    'publication_year': publicationYear,
+    'topic': topic,
+    'paper_link': paperLink,
+    'personal_notes': personalNotes,
+    'key_findings': keyFindings,
+    'status': status,
+    'attachment_url': attachmentUrl,
+  };
 
   ResearchPaper copyWith({
     String? id,
@@ -77,4 +77,3 @@ class ResearchPaper {
     );
   }
 }
-

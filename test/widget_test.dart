@@ -8,6 +8,6 @@ void main() {
     await tester.pumpWidget(const ProviderScope(child: DevOSApp()));
 
     // Verify that DevOS app title or main UI loads properly
-    expect(find.text('Dashboard Overview'), findsOneWidget);
+    expect(find.text('DevOS'), findsOneWidget);
   });
 }

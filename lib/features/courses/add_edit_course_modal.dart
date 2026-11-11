@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
+
 import '../../core/constants/app_colors.dart';
 import '../../models/course_model.dart';
 import '../../providers/app_providers.dart';
@@ -27,11 +28,16 @@ class _AddEditCourseModalState extends ConsumerState<AddEditCourseModal> {
     super.initState();
     _nameController = TextEditingController(text: widget.course?.name ?? '');
     _codeController = TextEditingController(text: widget.course?.code ?? '');
-    _instructorController = TextEditingController(text: widget.course?.instructor ?? '');
-    _creditHoursController =
-        TextEditingController(text: widget.course?.creditHours.toString() ?? '3.0');
-    _descriptionController = TextEditingController(text: widget.course?.description ?? '');
-    
+    _instructorController = TextEditingController(
+      text: widget.course?.instructor ?? '',
+    );
+    _creditHoursController = TextEditingController(
+      text: widget.course?.creditHours.toString() ?? '3.0',
+    );
+    _descriptionController = TextEditingController(
+      text: widget.course?.description ?? '',
+    );
+
     if (widget.course != null && widget.course!.topics.isNotEmpty) {
       _topicControllers = widget.course!.topics
           .map((t) => TextEditingController(text: t.title))
@@ -59,15 +65,18 @@ class _AddEditCourseModalState extends ConsumerState<AddEditCourseModal> {
     final code = _codeController.text.trim();
     if (name.isEmpty || code.isEmpty) return;
 
-    final creditHours = double.tryParse(_creditHoursController.text.trim()) ?? 3.0;
-    
+    final creditHours =
+        double.tryParse(_creditHoursController.text.trim()) ?? 3.0;
+
     final topics = _topicControllers
         .where((c) => c.text.trim().isNotEmpty)
-        .map((c) => CourseTopic(
-              id: const Uuid().v4(),
-              title: c.text.trim(),
-              isCompleted: false,
-            ))
+        .map(
+          (c) => CourseTopic(
+            id: const Uuid().v4(),
+            title: c.text.trim(),
+            isCompleted: false,
+          ),
+        )
         .toList();
 
     if (widget.course == null) {
@@ -142,7 +151,9 @@ class _AddEditCourseModalState extends ConsumerState<AddEditCourseModal> {
                 Expanded(
                   child: TextField(
                     controller: _creditHoursController,
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
                     decoration: const InputDecoration(
                       labelText: 'Credit Hours',
                       border: OutlineInputBorder(),
@@ -172,7 +183,10 @@ class _AddEditCourseModalState extends ConsumerState<AddEditCourseModal> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Topics / Modules', style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text(
+                  'Topics / Modules',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 IconButton(
                   icon: const Icon(Icons.add_circle, color: AppColors.primary),
                   onPressed: () {
@@ -202,7 +216,10 @@ class _AddEditCourseModalState extends ConsumerState<AddEditCourseModal> {
                     ),
                     if (_topicControllers.length > 1)
                       IconButton(
-                        icon: const Icon(Icons.remove_circle_outline, color: AppColors.accentRose),
+                        icon: const Icon(
+                          Icons.remove_circle_outline,
+                          color: AppColors.accentRose,
+                        ),
                         onPressed: () {
                           setState(() {
                             _topicControllers.removeAt(index);

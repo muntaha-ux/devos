@@ -21,11 +21,11 @@ class ProjectMilestone {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': title,
-        'target_date': targetDate,
-        'is_completed': isCompleted,
-      };
+    'id': id,
+    'title': title,
+    'target_date': targetDate,
+    'is_completed': isCompleted,
+  };
 
   ProjectMilestone copyWith({bool? isCompleted}) {
     return ProjectMilestone(
@@ -68,9 +68,13 @@ class Project {
     var rawTech = json['technologies'] as List? ?? [];
     List<String> techList = rawTech.map((e) => e.toString()).toList();
 
-    var rawMiles = json['milestones'] as List? ?? [];
-    List<ProjectMilestone> milestoneList =
-        rawMiles.map((m) => ProjectMilestone.fromJson(m)).toList();
+    var rawMiles =
+        json['milestones'] as List? ??
+        json['project_milestones'] as List? ??
+        [];
+    List<ProjectMilestone> milestoneList = rawMiles
+        .map((m) => ProjectMilestone.fromJson(m))
+        .toList();
 
     return Project(
       id: json['id'] ?? '',
@@ -88,18 +92,18 @@ class Project {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': title,
-        'description': description,
-        'technologies': technologies,
-        'github_url': githubUrl,
-        'live_url': liveUrl,
-        'start_date': startDate,
-        'target_completion_date': targetCompletionDate,
-        'status': status,
-        'progress_percentage': progressPercentage,
-        'milestones': milestones.map((m) => m.toJson()).toList(),
-      };
+    'id': id,
+    'title': title,
+    'description': description,
+    'technologies': technologies,
+    'github_url': githubUrl,
+    'live_url': liveUrl,
+    'start_date': startDate,
+    'target_completion_date': targetCompletionDate,
+    'status': status,
+    'progress_percentage': progressPercentage,
+    'milestones': milestones.map((m) => m.toJson()).toList(),
+  };
 
   Project copyWith({
     String? id,
@@ -129,4 +133,3 @@ class Project {
     );
   }
 }
-

@@ -32,6 +32,28 @@ class UserProfile {
     );
   }
 
+  UserProfile copyWith({
+    String? id,
+    String? email,
+    String? fullName,
+    String? avatarUrl,
+    String? institution,
+    String? major,
+    String? academicYear,
+    int? learningStreak,
+  }) {
+    return UserProfile(
+      id: id ?? this.id,
+      email: email ?? this.email,
+      fullName: fullName ?? this.fullName,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
+      institution: institution ?? this.institution,
+      major: major ?? this.major,
+      academicYear: academicYear ?? this.academicYear,
+      learningStreak: learningStreak ?? this.learningStreak,
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,

@@ -46,3 +46,9 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# Environment and sensitive keys
+.env*
+key.properties
+*.jks
+*.keystore

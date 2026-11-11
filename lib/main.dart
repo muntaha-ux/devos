@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
 import 'core/constants/supabase_config.dart';
 import 'core/theme/app_theme.dart';
 import 'core/constants/app_colors.dart';
@@ -8,28 +12,24 @@ import 'providers/app_providers.dart';
 import 'features/auth/login_screen.dart';
 import 'features/dashboard/dashboard_screen.dart';
 import 'features/courses/courses_screen.dart';
+import 'features/workload/workload_screen.dart';
+import 'features/notes/notes_screen.dart';
 import 'features/skills/skills_screen.dart';
 import 'features/projects/projects_screen.dart';
-import 'features/tasks/tasks_screen.dart';
-import 'features/goals/goals_screen.dart';
-import 'features/notes/notes_screen.dart';
-import 'features/research/research_screen.dart';
-import 'features/calendar/calendar_screen.dart';
-import 'features/analytics/analytics_screen.dart';
-import 'features/search/search_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Supabase.initialize(
-    url: SupabaseConfig.supabaseUrl,
-    anonKey: SupabaseConfig.supabaseAnonKey,
-  );
+  try {
+    await Supabase.initialize(
+      url: SupabaseConfig.supabaseUrl,
+      // ignore: deprecated_member_use
+      anonKey: SupabaseConfig.supabaseAnonKey,
+    );
+  } catch (e) {
+    debugPrint('Supabase initialization error: $e');
+  }
 
-  runApp(
-    const ProviderScope(
-      child: DevOSApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: DevOSApp()));
 }
 
 class DevOSApp extends ConsumerWidget {
@@ -50,26 +50,83 @@ class DevOSApp extends ConsumerWidget {
   }
 }
 
-class AuthWrapper extends StatefulWidget {
+class AuthWrapper extends ConsumerStatefulWidget {
   const AuthWrapper({super.key});
 
   @override
-  State<AuthWrapper> createState() => _AuthWrapperState();
+  ConsumerState<AuthWrapper> createState() => _AuthWrapperState();
 }
 
-class _AuthWrapperState extends State<AuthWrapper> {
-  bool _isAuthenticated = true; // Set to true by default for instant local dashboard access
+class _AuthWrapperState extends ConsumerState<AuthWrapper> {
+  late bool _isAuthenticated;
+  bool _isDemoSession = false;
+  StreamSubscription<AuthState>? _authSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _initAuth();
+  }
+
+  void _initAuth() {
+    try {
+      final user = Supabase.instance.client.auth.currentUser;
+      _isAuthenticated = user != null;
+      if (_isAuthenticated) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ref.read(syncWorkspaceProvider);
+        });
+      }
+
+      _authSubscription = Supabase.instance.client.auth.onAuthStateChange
+          .listen((data) {
+            if (_isDemoSession) return; // Retain local demo session
+            final isAuth = data.session != null;
+            if (mounted && isAuth != _isAuthenticated) {
+              setState(() => _isAuthenticated = isAuth);
+              if (isAuth) {
+                ref.read(syncWorkspaceProvider);
+              }
+            }
+          });
+    } catch (e) {
+      debugPrint('Auth initialization error: $e');
+      _isAuthenticated = false;
+    }
+  }
+
+  @override
+  void dispose() {
+    _authSubscription?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     if (!_isAuthenticated) {
       return LoginScreen(
-        onLoginSuccess: () => setState(() => _isAuthenticated = true),
+        onLoginSuccess: () {
+          bool isRemoteUser = false;
+          try {
+            isRemoteUser = Supabase.instance.client.auth.currentUser != null;
+          } catch (_) {}
+          setState(() {
+            _isAuthenticated = true;
+            _isDemoSession = !isRemoteUser;
+          });
+          ref.read(syncWorkspaceProvider);
+        },
       );
     }
 
     return DevOSMainShell(
-      onLogout: () => setState(() => _isAuthenticated = false),
+      onLogout: () async {
+        await ref.read(authRepositoryProvider).signOut();
+        setState(() {
+          _isAuthenticated = false;
+          _isDemoSession = false;
+        });
+      },
     );
   }
 }
@@ -86,128 +143,332 @@ class DevOSMainShell extends ConsumerStatefulWidget {
 class _DevOSMainShellState extends ConsumerState<DevOSMainShell> {
   int _currentIndex = 0;
 
-  final List<String> _titles = [
-    'Dashboard Overview',
-    'Courses & Syllabus',
-    'Technical Skill Matrix',
-    'Software Projects',
-    'Tasks & Workload',
-    'Goals & Roadmaps',
-    'Notes & Knowledge Base',
-    'Research Papers',
-    'Calendar & Deadlines',
-    'Analytics & Progress',
-  ];
-
   @override
   Widget build(BuildContext context) {
     final themeMode = ref.watch(themeModeProvider);
     final isDark = themeMode == ThemeMode.dark;
 
+    final profile = ref.watch(profileProvider);
+
     final pages = [
-      DashboardScreen(onNavigateToTab: (index) => setState(() => _currentIndex = index)),
+      DashboardScreen(
+        onNavigateToTab: (index) => setState(() => _currentIndex = index),
+      ),
       const CoursesScreen(),
+      const WorkloadScreen(),
       const SkillsScreen(),
       const ProjectsScreen(),
-      const TasksScreen(),
-      const GoalsScreen(),
       const NotesScreen(),
-      const ResearchScreen(),
-      const CalendarScreen(),
-      const AnalyticsScreen(),
     ];
 
+    final showDevOSTopBar = _currentIndex == 0 || _currentIndex == 1;
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_titles[_currentIndex]),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SearchScreen()),
-              );
-            },
-          ),
-          IconButton(
-            icon: Icon(isDark ? Icons.light_mode_outlined : Icons.dark_mode_outlined),
-            onPressed: () {
-              ref.read(themeModeProvider.notifier).toggleTheme();
-            },
-          ),
-        ],
-      ),
+      backgroundColor: AppColors.background(context),
+      appBar: showDevOSTopBar
+          ? AppBar(
+              backgroundColor: AppColors.background(context),
+              elevation: 0,
+              leadingWidth: 64,
+              leading: Padding(
+                padding: const EdgeInsets.only(left: 16.0),
+                child: Builder(
+                  builder: (context) => Semantics(
+                    label: 'Open Navigation Drawer',
+                    button: true,
+                    child: InkWell(
+                      onTap: () => Scaffold.of(context).openDrawer(),
+                      borderRadius: BorderRadius.circular(20),
+                      child: CircleAvatar(
+                        radius: 18,
+                        backgroundColor: Colors.black,
+                        child: CircleAvatar(
+                          radius: 17,
+                          backgroundColor: const Color(0xFFE2C9B8),
+                          child: Text(
+                            profile.fullName.trim().isNotEmpty
+                                ? (profile.fullName.trim().length >= 2
+                                          ? profile.fullName.trim().substring(
+                                              0,
+                                              2,
+                                            )
+                                          : profile.fullName.trim())
+                                      .toUpperCase()
+                                : 'DV',
+                            style: GoogleFonts.jetBrainsMono(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              centerTitle: true,
+              title: Text(
+                'DevOS',
+                style: GoogleFonts.jetBrainsMono(
+                  color: isDark ? const Color(0xFF60A5FA) : AppColors.figmaBlue,
+                  fontWeight: FontWeight.w900,
+                  fontSize: 22,
+                  letterSpacing: 3.5,
+                ),
+              ),
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 12.0),
+                  child: Semantics(
+                    label: 'Search DevOS Workspace',
+                    button: true,
+                    child: InkWell(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            backgroundColor: AppColors.card(ctx),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              side: BorderSide(
+                                color: AppColors.cardBorder(ctx),
+                              ),
+                            ),
+                            title: Text(
+                              'Search DevOS',
+                              style: GoogleFonts.inter(
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.textPrimary(ctx),
+                              ),
+                            ),
+                            content: TextField(
+                              autofocus: true,
+                              style: TextStyle(
+                                color: AppColors.textPrimary(ctx),
+                              ),
+                              decoration: InputDecoration(
+                                hintText: 'Search courses, skills, projects, notes...',
+                                hintStyle: TextStyle(
+                                  color: AppColors.textSecondary(ctx),
+                                ),
+                                prefixIcon: Icon(
+                                  Icons.search,
+                                  color: AppColors.textSecondary(ctx),
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(ctx),
+                                child: Text(
+                                  'Close',
+                                  style: GoogleFonts.jetBrainsMono(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        width: 44,
+                        height: 44,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? AppColors.surfaceDark
+                              : AppColors.figmaCardDark,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: isDark
+                                ? AppColors.cardBorderDark
+                                : Colors.transparent,
+                          ),
+                        ),
+                        child: const Icon(
+                          Icons.search,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          : null,
       drawer: Drawer(
-        backgroundColor: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
+        backgroundColor: isDark
+            ? AppColors.surfaceDark
+            : AppColors.surfaceLight,
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
             UserAccountsDrawerHeader(
-              decoration: const BoxDecoration(
-                color: AppColors.backgroundDark,
+              decoration: BoxDecoration(
+                color: isDark
+                    ? const Color(0xFF0F141C)
+                    : AppColors.backgroundDark,
               ),
-              accountName: const Text('Alex Vance', style: TextStyle(fontWeight: FontWeight.bold)),
-              accountEmail: const Text('alex.dev@university.edu', style: TextStyle(color: AppColors.primary)),
+              accountName: Text(
+                profile.fullName,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              accountEmail: Text(
+                profile.email,
+                style: const TextStyle(color: AppColors.primary),
+              ),
               currentAccountPicture: CircleAvatar(
-                backgroundColor: AppColors.primary.withOpacity(0.2),
-                child: const Text('AV', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
+                backgroundColor: AppColors.primary.withValues(alpha: 0.2),
+                child: Text(
+                  profile.fullName.trim().isNotEmpty
+                      ? (profile.fullName.trim().length >= 2
+                                ? profile.fullName.trim().substring(0, 2)
+                                : profile.fullName.trim())
+                            .toUpperCase()
+                      : 'DV',
+                  style: const TextStyle(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
             _buildDrawerTile(0, 'Dashboard Overview', Icons.dashboard_outlined),
             _buildDrawerTile(1, 'Courses & Syllabus', Icons.school_outlined),
-            _buildDrawerTile(2, 'Skill Matrix', Icons.code_rounded),
-            _buildDrawerTile(3, 'Software Projects', Icons.rocket_launch_outlined),
-            _buildDrawerTile(4, 'Task Management', Icons.task_alt),
-            _buildDrawerTile(5, 'Goals & Roadmaps', Icons.flag_outlined),
-            _buildDrawerTile(6, 'Notes & Knowledge Base', Icons.description_outlined),
-            _buildDrawerTile(7, 'Research Papers', Icons.menu_book_outlined),
-            _buildDrawerTile(8, 'Calendar & Deadlines', Icons.calendar_month_outlined),
-            _buildDrawerTile(9, 'Analytics & Stats', Icons.bar_chart_rounded),
+            _buildDrawerTile(
+              2,
+              'Workload & Tasks',
+              Icons.assignment_turned_in_rounded,
+            ),
+            _buildDrawerTile(3, 'Skill Matrix', Icons.code_rounded),
+            _buildDrawerTile(
+              4,
+              'Software Projects',
+              Icons.rocket_launch_outlined,
+            ),
+            _buildDrawerTile(
+              5,
+              'Notes & Knowledge Base',
+              Icons.menu_book_rounded,
+            ),
+            const Divider(),
+            ListTile(
+              leading: Icon(
+                isDark ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
+                color: isDark
+                    ? const Color(0xFFFBBF24)
+                    : AppColors.textPrimaryLight,
+              ),
+              title: Text(
+                isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode',
+                style: TextStyle(
+                  color: isDark
+                      ? AppColors.textPrimaryDark
+                      : AppColors.textPrimaryLight,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              trailing: Switch.adaptive(
+                value: isDark,
+                onChanged: (val) {
+                  ref.read(themeModeProvider.notifier).toggleTheme();
+                },
+              ),
+              onTap: () {
+                ref.read(themeModeProvider.notifier).toggleTheme();
+              },
+            ),
             const Divider(),
             ListTile(
               leading: const Icon(Icons.logout, color: AppColors.accentRose),
-              title: const Text('Logout', style: TextStyle(color: AppColors.accentRose)),
+              title: const Text(
+                'Logout / Switch User',
+                style: TextStyle(color: AppColors.accentRose),
+              ),
               onTap: widget.onLogout,
             ),
           ],
         ),
       ),
-      body: pages[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex > 4 ? 0 : _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard_outlined),
-            activeIcon: Icon(Icons.dashboard),
-            label: 'Dashboard',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.school_outlined),
-            activeIcon: Icon(Icons.school),
-            label: 'Courses',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.code_rounded),
-            activeIcon: Icon(Icons.code),
-            label: 'Skills',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.rocket_launch_outlined),
-            activeIcon: Icon(Icons.rocket_launch),
-            label: 'Projects',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.task_alt_outlined),
-            activeIcon: Icon(Icons.task_alt),
-            label: 'Tasks',
-          ),
-        ],
+      body: SafeArea(child: pages[_currentIndex]),
+      bottomNavigationBar: _buildFigmaBottomNavBar(),
+    );
+  }
+
+  Widget _buildFigmaBottomNavBar() {
+    return Container(
+      color: AppColors.figmaBottomNav,
+      padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
+      child: SafeArea(
+        top: false,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _buildNavItem(0, 'Dashboard', Icons.grid_view_rounded),
+            _buildNavItem(1, 'Courses', Icons.school_outlined),
+            _buildNavItem(2, 'Workload', Icons.assignment_turned_in_rounded),
+            _buildNavItem(3, 'Skills', Icons.terminal_rounded),
+            _buildNavItem(4, 'Projects', Icons.alt_route_rounded),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(int index, String label, IconData icon) {
+    final isSelected = _currentIndex == index;
+    return InkWell(
+      onTap: () {
+        setState(() {
+          _currentIndex = index;
+        });
+      },
+      borderRadius: BorderRadius.circular(10),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: isSelected
+            ? const EdgeInsets.symmetric(horizontal: 14, vertical: 6)
+            : const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: isSelected
+            ? BoxDecoration(
+                color: AppColors.figmaNavActive,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: const Color(0xFF800028), width: 1),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFFE91E63).withValues(alpha: 0.35),
+                    blurRadius: 10,
+                    spreadRadius: 1,
+                  ),
+                ],
+              )
+            : null,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              color: isSelected ? Colors.white : const Color(0xFFF3C7D4),
+              size: 20,
+            ),
+            const SizedBox(height: 3),
+            Text(
+              label,
+              style: GoogleFonts.jetBrainsMono(
+                color: isSelected ? Colors.white : const Color(0xFFF3C7D4),
+                fontSize: 10,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -215,7 +476,10 @@ class _DevOSMainShellState extends ConsumerState<DevOSMainShell> {
   Widget _buildDrawerTile(int index, String title, IconData icon) {
     final isSelected = _currentIndex == index;
     return ListTile(
-      leading: Icon(icon, color: isSelected ? AppColors.primary : AppColors.textMutedDark),
+      leading: Icon(
+        icon,
+        color: isSelected ? AppColors.primary : AppColors.textMutedDark,
+      ),
       title: Text(
         title,
         style: TextStyle(

@@ -3,11 +3,7 @@ class SkillTopic {
   final String title;
   final bool isCompleted;
 
-  SkillTopic({
-    required this.id,
-    required this.title,
-    this.isCompleted = false,
-  });
+  SkillTopic({required this.id, required this.title, this.isCompleted = false});
 
   factory SkillTopic.fromJson(Map<String, dynamic> json) {
     return SkillTopic(
@@ -18,10 +14,10 @@ class SkillTopic {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': title,
-        'is_completed': isCompleted,
-      };
+    'id': id,
+    'title': title,
+    'is_completed': isCompleted,
+  };
 
   SkillTopic copyWith({bool? isCompleted}) {
     return SkillTopic(
@@ -50,8 +46,11 @@ class Skill {
   });
 
   factory Skill.fromJson(Map<String, dynamic> json) {
-    var rawTopics = json['topics'] as List? ?? [];
-    List<SkillTopic> topicsList = rawTopics.map((t) => SkillTopic.fromJson(t)).toList();
+    var rawTopics =
+        json['topics'] as List? ?? json['skill_topics'] as List? ?? [];
+    List<SkillTopic> topicsList = rawTopics
+        .map((t) => SkillTopic.fromJson(t))
+        .toList();
 
     return Skill(
       id: json['id'] ?? '',
@@ -64,13 +63,13 @@ class Skill {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'category': category,
-        'proficiency_level': proficiencyLevel,
-        'progress_percentage': progressPercentage,
-        'topics': topics.map((t) => t.toJson()).toList(),
-      };
+    'id': id,
+    'name': name,
+    'category': category,
+    'proficiency_level': proficiencyLevel,
+    'progress_percentage': progressPercentage,
+    'topics': topics.map((t) => t.toJson()).toList(),
+  };
 
   Skill copyWith({
     String? id,
@@ -90,4 +89,3 @@ class Skill {
     );
   }
 }
-

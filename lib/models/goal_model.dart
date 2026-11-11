@@ -18,10 +18,10 @@ class GoalMilestone {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': title,
-        'is_completed': isCompleted,
-      };
+    'id': id,
+    'title': title,
+    'is_completed': isCompleted,
+  };
 
   GoalMilestone copyWith({bool? isCompleted}) {
     return GoalMilestone(
@@ -54,9 +54,11 @@ class Goal {
   });
 
   factory Goal.fromJson(Map<String, dynamic> json) {
-    var rawMiles = json['milestones'] as List? ?? [];
-    List<GoalMilestone> milestoneList =
-        rawMiles.map((m) => GoalMilestone.fromJson(m)).toList();
+    var rawMiles =
+        json['milestones'] as List? ?? json['goal_milestones'] as List? ?? [];
+    List<GoalMilestone> milestoneList = rawMiles
+        .map((m) => GoalMilestone.fromJson(m))
+        .toList();
 
     return Goal(
       id: json['id'] ?? '',
@@ -71,15 +73,15 @@ class Goal {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': title,
-        'description': description,
-        'category': category,
-        'target_date': targetDate,
-        'progress_percentage': progressPercentage,
-        'status': status,
-        'milestones': milestones.map((m) => m.toJson()).toList(),
-      };
+    'id': id,
+    'title': title,
+    'description': description,
+    'category': category,
+    'target_date': targetDate,
+    'progress_percentage': progressPercentage,
+    'status': status,
+    'milestones': milestones.map((m) => m.toJson()).toList(),
+  };
 
   Goal copyWith({
     String? id,
@@ -103,4 +105,3 @@ class Goal {
     );
   }
 }
-

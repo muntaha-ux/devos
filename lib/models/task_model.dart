@@ -1,4 +1,5 @@
 enum TaskPriority { low, medium, high, urgent }
+
 enum TaskStatus { pending, inProgress, completed }
 
 class DevTask {
@@ -9,7 +10,9 @@ class DevTask {
   final TaskPriority priority;
   final TaskStatus status;
   final DateTime? dueDate;
+  final String? relatedCourseId;
   final String? relatedCourseName;
+  final String? relatedProjectId;
   final String? relatedProjectName;
 
   DevTask({
@@ -20,20 +23,26 @@ class DevTask {
     required this.priority,
     required this.status,
     this.dueDate,
+    this.relatedCourseId,
     this.relatedCourseName,
+    this.relatedProjectId,
     this.relatedProjectName,
   });
 
   factory DevTask.fromJson(Map<String, dynamic> json) {
     return DevTask(
-      id: json['id'] ?? '',
+      id: json['id']?.toString() ?? '',
       title: json['title'] ?? '',
       description: json['description'] ?? '',
       category: json['category'] ?? 'general',
       priority: _parsePriority(json['priority']),
       status: _parseStatus(json['status']),
-      dueDate: json['due_date'] != null ? DateTime.tryParse(json['due_date']) : null,
+      dueDate: json['due_date'] != null
+          ? DateTime.tryParse(json['due_date'])
+          : null,
+      relatedCourseId: json['related_course_id']?.toString(),
       relatedCourseName: json['related_course_name'],
+      relatedProjectId: json['related_project_id']?.toString(),
       relatedProjectName: json['related_project_name'],
     );
   }
@@ -58,6 +67,7 @@ class DevTask {
         return TaskStatus.completed;
       case 'in_progress':
       case 'in progress':
+      case 'inprogress':
         return TaskStatus.inProgress;
       case 'pending':
       default:
@@ -66,16 +76,18 @@ class DevTask {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': title,
-        'description': description,
-        'category': category,
-        'priority': priority.name,
-        'status': status.name,
-        'due_date': dueDate?.toIso8601String(),
-        'related_course_name': relatedCourseName,
-        'related_project_name': relatedProjectName,
-      };
+    'id': id,
+    'title': title,
+    'description': description,
+    'category': category,
+    'priority': priority.name,
+    'status': status == TaskStatus.inProgress ? 'in_progress' : status.name,
+    'due_date': dueDate?.toIso8601String(),
+    'related_course_id': relatedCourseId,
+    'related_course_name': relatedCourseName,
+    'related_project_id': relatedProjectId,
+    'related_project_name': relatedProjectName,
+  };
 
   DevTask copyWith({
     String? id,
@@ -85,7 +97,9 @@ class DevTask {
     TaskPriority? priority,
     TaskStatus? status,
     DateTime? dueDate,
+    String? relatedCourseId,
     String? relatedCourseName,
+    String? relatedProjectId,
     String? relatedProjectName,
   }) {
     return DevTask(
@@ -96,7 +110,9 @@ class DevTask {
       priority: priority ?? this.priority,
       status: status ?? this.status,
       dueDate: dueDate ?? this.dueDate,
+      relatedCourseId: relatedCourseId ?? this.relatedCourseId,
       relatedCourseName: relatedCourseName ?? this.relatedCourseName,
+      relatedProjectId: relatedProjectId ?? this.relatedProjectId,
       relatedProjectName: relatedProjectName ?? this.relatedProjectName,
     );
   }

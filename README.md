@@ -1,6 +1,6 @@
 # devos
 
-A new Flutter project.
+Personal Engineering & Academic Dashboard
 
 ## Getting Started
 

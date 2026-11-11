@@ -18,10 +18,10 @@ class CourseTopic {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': title,
-        'is_completed': isCompleted,
-      };
+    'id': id,
+    'title': title,
+    'is_completed': isCompleted,
+  };
 
   CourseTopic copyWith({bool? isCompleted}) {
     return CourseTopic(
@@ -56,8 +56,11 @@ class Course {
   });
 
   factory Course.fromJson(Map<String, dynamic> json) {
-    var rawTopics = json['topics'] as List? ?? [];
-    List<CourseTopic> topicsList = rawTopics.map((t) => CourseTopic.fromJson(t)).toList();
+    var rawTopics =
+        json['topics'] as List? ?? json['course_topics'] as List? ?? [];
+    List<CourseTopic> topicsList = rawTopics
+        .map((t) => CourseTopic.fromJson(t))
+        .toList();
 
     return Course(
       id: json['id'] ?? '',
@@ -73,16 +76,16 @@ class Course {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'code': code,
-        'instructor': instructor,
-        'credit_hours': creditHours,
-        'description': description,
-        'color_hex': colorHex,
-        'progress_percentage': progressPercentage,
-        'topics': topics.map((t) => t.toJson()).toList(),
-      };
+    'id': id,
+    'name': name,
+    'code': code,
+    'instructor': instructor,
+    'credit_hours': creditHours,
+    'description': description,
+    'color_hex': colorHex,
+    'progress_percentage': progressPercentage,
+    'topics': topics.map((t) => t.toJson()).toList(),
+  };
 
   Course copyWith({
     String? id,
@@ -108,4 +111,3 @@ class Course {
     );
   }
 }
-
