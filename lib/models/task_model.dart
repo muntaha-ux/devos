@@ -41,9 +41,13 @@ class DevTask {
           ? DateTime.tryParse(json['due_date'])
           : null,
       relatedCourseId: json['related_course_id']?.toString(),
-      relatedCourseName: json['related_course_name'],
+      relatedCourseName:
+          json['related_course_name'] ??
+          (json['courses'] is Map ? json['courses']['name'] : null),
       relatedProjectId: json['related_project_id']?.toString(),
-      relatedProjectName: json['related_project_name'],
+      relatedProjectName:
+          json['related_project_name'] ??
+          (json['projects'] is Map ? json['projects']['title'] : null),
     );
   }
 

@@ -20,6 +20,15 @@ class Note {
   factory Note.fromJson(Map<String, dynamic> json) {
     var rawTags = json['tags'] as List? ?? [];
     List<String> tagsList = rawTags.map((t) => t.toString()).toList();
+    if (tagsList.isEmpty && json['content'] != null) {
+      final contentStr = json['content'].toString();
+      final tagRegex = RegExp(r'#([a-zA-Z0-9_\-]+)');
+      tagsList = tagRegex
+          .allMatches(contentStr)
+          .map((m) => '#${m.group(1)}')
+          .toSet()
+          .toList();
+    }
 
     return Note(
       id: json['id'] ?? '',

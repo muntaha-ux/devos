@@ -96,9 +96,99 @@ class SupabaseDatabaseRepository {
   }
 
   // ===================== COURSES =====================
+  static final List<Course> _defaultSampleCourses = [
+    Course(
+      id: 'course-1',
+      name: 'Data Structures & Algorithms',
+      code: 'CSE 2201',
+      instructor: 'Dr. Alan Turing',
+      creditHours: 3.0,
+      description:
+          'Advanced trees, graphs, dynamic programming, and complexity theory.',
+      colorHex: '#06B6D4',
+      progressPercentage: 50,
+      topics: [
+        CourseTopic(
+          id: 'c1-t1',
+          title: 'Binary Search Trees & AVL',
+          isCompleted: true,
+        ),
+        CourseTopic(
+          id: 'c1-t2',
+          title: 'Graph Traversal (BFS / DFS)',
+          isCompleted: true,
+        ),
+        CourseTopic(
+          id: 'c1-t3',
+          title: 'Dynamic Programming Knapsack',
+          isCompleted: false,
+        ),
+        CourseTopic(
+          id: 'c1-t4',
+          title: 'Shortest Path (Dijkstra, Bellman-Ford)',
+          isCompleted: false,
+        ),
+      ],
+    ),
+    Course(
+      id: 'course-2',
+      name: 'Distributed Systems & Cloud Computing',
+      code: 'CSE 4105',
+      instructor: 'Prof. Leslie Lamport',
+      creditHours: 3.5,
+      description: 'Consensus algorithms, Paxos, Raft, microservices, and high availability.',
+      colorHex: '#10B981',
+      progressPercentage: 33,
+      topics: [
+        CourseTopic(
+          id: 'c2-t1',
+          title: 'CAP Theorem & PACELC',
+          isCompleted: true,
+        ),
+        CourseTopic(
+          id: 'c2-t2',
+          title: 'Raft Consensus Protocol',
+          isCompleted: false,
+        ),
+        CourseTopic(
+          id: 'c2-t3',
+          title: 'Vector Clocks & Distributed Ordering',
+          isCompleted: false,
+        ),
+      ],
+    ),
+    Course(
+      id: 'course-3',
+      name: 'Operating Systems & Concurrency',
+      code: 'CSE 3102',
+      instructor: 'Dr. Andrew Tanenbaum',
+      creditHours: 4.0,
+      description: 'Kernel architecture, virtual memory, synchronization primitives, and file systems.',
+      colorHex: '#8F0030',
+      progressPercentage: 67,
+      topics: [
+        CourseTopic(
+          id: 'c3-t1',
+          title: 'Process Synchronization & Semaphores',
+          isCompleted: true,
+        ),
+        CourseTopic(
+          id: 'c3-t2',
+          title: 'Virtual Memory & Page Replacement',
+          isCompleted: true,
+        ),
+        CourseTopic(
+          id: 'c3-t3',
+          title: 'UNIX VFS & Inode Allocation',
+          isCompleted: false,
+        ),
+      ],
+    ),
+  ];
+
   Future<List<Course>> getCourses() async {
     final userId = _currentUserId;
-    if (userId == null) return [];
+    if (userId == null) return _defaultSampleCourses;
     try {
       final response = await _client
           .from('courses')
@@ -106,9 +196,10 @@ class SupabaseDatabaseRepository {
           .eq('user_id', userId)
           .order('created_at', ascending: false);
 
-      return (response as List).map((c) => Course.fromJson(c)).toList();
+      final list = (response as List).map((c) => Course.fromJson(c)).toList();
+      return list.isEmpty ? _defaultSampleCourses : list;
     } catch (_) {
-      return [];
+      return _defaultSampleCourses;
     }
   }
 
@@ -199,9 +290,94 @@ class SupabaseDatabaseRepository {
   }
 
   // ===================== SKILLS =====================
+  static final List<Skill> _defaultSampleSkills = [
+    Skill(
+      id: 'skill-1',
+      name: 'Flutter & Dart Architecture',
+      category: 'Frontend & Mobile',
+      proficiencyLevel: 'Advanced',
+      progressPercentage: 75,
+      topics: [
+        SkillTopic(
+          id: 's1-t1',
+          title: 'Riverpod State Management',
+          isCompleted: true,
+        ),
+        SkillTopic(
+          id: 's1-t2',
+          title: 'SOLID Principles in Dart',
+          isCompleted: true,
+        ),
+        SkillTopic(
+          id: 's1-t3',
+          title: 'Supabase PostgreSQL Integration',
+          isCompleted: true,
+        ),
+        SkillTopic(
+          id: 's1-t4',
+          title: 'Custom Canvas & Shaders',
+          isCompleted: false,
+        ),
+      ],
+    ),
+    Skill(
+      id: 'skill-2',
+      name: 'Distributed Systems & Backend',
+      category: 'Backend & Cloud',
+      proficiencyLevel: 'Intermediate',
+      progressPercentage: 60,
+      topics: [
+        SkillTopic(
+          id: 's2-t1',
+          title: 'PostgreSQL Row Level Security',
+          isCompleted: true,
+        ),
+        SkillTopic(
+          id: 's2-t2',
+          title: 'gRPC & Protocol Buffers',
+          isCompleted: true,
+        ),
+        SkillTopic(
+          id: 's2-t3',
+          title: 'Kafka Event Streams',
+          isCompleted: false,
+        ),
+        SkillTopic(
+          id: 's2-t4',
+          title: 'Raft Consensus Implementation',
+          isCompleted: false,
+        ),
+      ],
+    ),
+    Skill(
+      id: 'skill-3',
+      name: 'Embedded Systems & ROS2',
+      category: 'Robotics & Hardware',
+      proficiencyLevel: 'Intermediate',
+      progressPercentage: 50,
+      topics: [
+        SkillTopic(
+          id: 's3-t1',
+          title: 'UART Framing & Micro-ROS',
+          isCompleted: true,
+        ),
+        SkillTopic(
+          id: 's3-t2',
+          title: 'STM32 Hardware Serial Interfacing',
+          isCompleted: true,
+        ),
+        SkillTopic(
+          id: 's3-t3',
+          title: 'Kinematics & Motion Planning',
+          isCompleted: false,
+        ),
+      ],
+    ),
+  ];
+
   Future<List<Skill>> getSkills() async {
     final userId = _currentUserId;
-    if (userId == null) return [];
+    if (userId == null) return _defaultSampleSkills;
     try {
       final response = await _client
           .from('skills')
@@ -209,9 +385,10 @@ class SupabaseDatabaseRepository {
           .eq('user_id', userId)
           .order('created_at', ascending: false);
 
-      return (response as List).map((s) => Skill.fromJson(s)).toList();
+      final list = (response as List).map((s) => Skill.fromJson(s)).toList();
+      return list.isEmpty ? _defaultSampleSkills : list;
     } catch (_) {
-      return [];
+      return _defaultSampleSkills;
     }
   }
 
@@ -296,9 +473,108 @@ class SupabaseDatabaseRepository {
   }
 
   // ===================== PROJECTS =====================
+  static final List<Project> _defaultSampleProjects = [
+    Project(
+      id: 'proj-1',
+      title: 'DevOS Engineering Workspace',
+      description: 'Full-stack engineering & academic dashboard built with Flutter & Supabase.',
+      technologies: ['Flutter', 'Dart', 'Supabase', 'PostgreSQL'],
+      githubUrl: 'https://github.com/developer/devos',
+      liveUrl: 'https://devos.app',
+      startDate: '2026-01-10',
+      targetCompletionDate: '2026-06-30',
+      status: 'in_progress',
+      progressPercentage: 75,
+      milestones: [
+        ProjectMilestone(
+          id: 'p1-m1',
+          title: 'Setup Supabase Schema & Auth',
+          targetDate: '2026-02-15',
+          isCompleted: true,
+        ),
+        ProjectMilestone(
+          id: 'p1-m2',
+          title: 'SOLID Architecture Refactor',
+          targetDate: '2026-03-30',
+          isCompleted: true,
+        ),
+        ProjectMilestone(
+          id: 'p1-m3',
+          title: 'End-to-End Real-Time Sync',
+          targetDate: '2026-05-15',
+          isCompleted: false,
+        ),
+      ],
+    ),
+    Project(
+      id: 'proj-2',
+      title: 'Robotic Arm ROS2 Controller',
+      description: '6-DOF robotic manipulator controller with STM32 UART bridge and micro-ROS.',
+      technologies: ['C++', 'Python', 'ROS2', 'STM32'],
+      githubUrl: 'https://github.com/developer/robotic-arm-ros2',
+      liveUrl: '',
+      startDate: '2026-02-01',
+      targetCompletionDate: '2026-08-15',
+      status: 'in_progress',
+      progressPercentage: 50,
+      milestones: [
+        ProjectMilestone(
+          id: 'p2-m1',
+          title: 'Kinematics Solver in C++',
+          targetDate: '2026-03-10',
+          isCompleted: true,
+        ),
+        ProjectMilestone(
+          id: 'p2-m2',
+          title: 'Hardware UART Serial Driver',
+          targetDate: '2026-04-20',
+          isCompleted: true,
+        ),
+        ProjectMilestone(
+          id: 'p2-m3',
+          title: 'Trajectory Generation Node',
+          targetDate: '2026-07-01',
+          isCompleted: false,
+        ),
+      ],
+    ),
+    Project(
+      id: 'proj-3',
+      title: 'Distributed Key-Value Store',
+      description: 'High-availability partitioned key-value store implementing Raft consensus.',
+      technologies: ['Go', 'gRPC', 'Raft', 'Docker'],
+      githubUrl: 'https://github.com/developer/raft-kv',
+      liveUrl: '',
+      startDate: '2026-03-01',
+      targetCompletionDate: '2026-09-30',
+      status: 'planning',
+      progressPercentage: 25,
+      milestones: [
+        ProjectMilestone(
+          id: 'p3-m1',
+          title: 'Leader Election State Machine',
+          targetDate: '2026-04-15',
+          isCompleted: true,
+        ),
+        ProjectMilestone(
+          id: 'p3-m2',
+          title: 'Log Replication & Heartbeats',
+          targetDate: '2026-06-01',
+          isCompleted: false,
+        ),
+        ProjectMilestone(
+          id: 'p3-m3',
+          title: 'Snapshotting & Compaction',
+          targetDate: '2026-08-30',
+          isCompleted: false,
+        ),
+      ],
+    ),
+  ];
+
   Future<List<Project>> getProjects() async {
     final userId = _currentUserId;
-    if (userId == null) return [];
+    if (userId == null) return _defaultSampleProjects;
     try {
       final response = await _client
           .from('projects')
@@ -306,9 +582,10 @@ class SupabaseDatabaseRepository {
           .eq('user_id', userId)
           .order('created_at', ascending: false);
 
-      return (response as List).map((p) => Project.fromJson(p)).toList();
+      final list = (response as List).map((p) => Project.fromJson(p)).toList();
+      return list.isEmpty ? _defaultSampleProjects : list;
     } catch (_) {
-      return [];
+      return _defaultSampleProjects;
     }
   }
 
@@ -487,15 +764,12 @@ class SupabaseDatabaseRepository {
     try {
       final response = await _client
           .from('tasks')
-          .select()
+          .select('*, courses(name), projects(title)')
           .eq('user_id', userId)
           .order('created_at', ascending: false);
 
       final list = (response as List).map((t) => DevTask.fromJson(t)).toList();
-      if (list.isEmpty) {
-        return _defaultSampleTasks;
-      }
-      return list;
+      return list.isEmpty ? _defaultSampleTasks : list;
     } catch (_) {
       return _defaultSampleTasks;
     }
@@ -587,9 +861,33 @@ class SupabaseDatabaseRepository {
   }
 
   // ===================== GOALS =====================
+  static final List<Goal> _defaultSampleGoals = [
+    Goal(
+      id: 'goal-1',
+      title: 'Master Distributed Systems & Cloud Infrastructure',
+      description: 'Achieve strong theoretical & practical mastery for engineering career.',
+      category: 'Engineering',
+      targetDate: '2026-12-31',
+      progressPercentage: 50,
+      status: 'active',
+      milestones: [
+        GoalMilestone(
+          id: 'g1-m1',
+          title: 'Finish Lamport distributed systems textbook',
+          isCompleted: true,
+        ),
+        GoalMilestone(
+          id: 'g1-m2',
+          title: 'Deploy Kubernetes cluster on cloud infrastructure',
+          isCompleted: false,
+        ),
+      ],
+    ),
+  ];
+
   Future<List<Goal>> getGoals() async {
     final userId = _currentUserId;
-    if (userId == null) return [];
+    if (userId == null) return _defaultSampleGoals;
     try {
       final response = await _client
           .from('goals')
@@ -597,9 +895,10 @@ class SupabaseDatabaseRepository {
           .eq('user_id', userId)
           .order('created_at', ascending: false);
 
-      return (response as List).map((g) => Goal.fromJson(g)).toList();
+      final list = (response as List).map((g) => Goal.fromJson(g)).toList();
+      return list.isEmpty ? _defaultSampleGoals : list;
     } catch (_) {
-      return [];
+      return _defaultSampleGoals;
     }
   }
 
@@ -847,10 +1146,7 @@ String renderStatus(AuthState state) => switch (state) {
           .order('created_at', ascending: false);
 
       final list = (response as List).map((n) => Note.fromJson(n)).toList();
-      if (list.isEmpty) {
-        return _defaultSampleNotes;
-      }
-      return list;
+      return list.isEmpty ? _defaultSampleNotes : list;
     } catch (_) {
       return _defaultSampleNotes;
     }
@@ -910,9 +1206,23 @@ String renderStatus(AuthState state) => switch (state) {
   }
 
   // ===================== RESEARCH PAPERS =====================
+  static final List<ResearchPaper> _defaultSampleResearch = [
+    ResearchPaper(
+      id: 'res-1',
+      title: 'In Search of an Understandable Consensus Algorithm (Raft)',
+      authors: 'Diego Ongaro and John Ousterhout',
+      publicationYear: 2014,
+      topic: 'Distributed Consensus',
+      paperLink: 'https://raft.github.io/raft.pdf',
+      personalNotes: 'Key insight: decomposes consensus into leader election, log replication, and safety.',
+      keyFindings: 'Raft is significantly more understandable and debuggable than Multi-Paxos.',
+      status: 'reading',
+    ),
+  ];
+
   Future<List<ResearchPaper>> getResearchPapers() async {
     final userId = _currentUserId;
-    if (userId == null) return [];
+    if (userId == null) return _defaultSampleResearch;
     try {
       final response = await _client
           .from('research')
@@ -920,9 +1230,12 @@ String renderStatus(AuthState state) => switch (state) {
           .eq('user_id', userId)
           .order('created_at', ascending: false);
 
-      return (response as List).map((r) => ResearchPaper.fromJson(r)).toList();
+      final list = (response as List)
+          .map((r) => ResearchPaper.fromJson(r))
+          .toList();
+      return list.isEmpty ? _defaultSampleResearch : list;
     } catch (_) {
-      return [];
+      return _defaultSampleResearch;
     }
   }
 
@@ -983,9 +1296,29 @@ String renderStatus(AuthState state) => switch (state) {
   }
 
   // ===================== CALENDAR EVENTS =====================
+  static final List<CalendarEvent> _defaultSampleEvents = [
+    CalendarEvent(
+      id: 'event-1',
+      title: 'Algorithms Midterm Exam',
+      description:
+          'Auditorium Hall B - Topics: Graphs, BST, Dynamic Programming',
+      eventType: 'exam',
+      startTime: DateTime.now().add(const Duration(days: 4)),
+      endTime: DateTime.now().add(const Duration(days: 4, hours: 2)),
+    ),
+    CalendarEvent(
+      id: 'event-2',
+      title: 'DevOS Milestone 2 Code Review',
+      description: 'Live presentation of Supabase backend architecture',
+      eventType: 'project_deadline',
+      startTime: DateTime.now().add(const Duration(days: 2)),
+      endTime: DateTime.now().add(const Duration(days: 2, hours: 1)),
+    ),
+  ];
+
   Future<List<CalendarEvent>> getEvents() async {
     final userId = _currentUserId;
-    if (userId == null) return [];
+    if (userId == null) return _defaultSampleEvents;
     try {
       final response = await _client
           .from('events')
@@ -993,9 +1326,12 @@ String renderStatus(AuthState state) => switch (state) {
           .eq('user_id', userId)
           .order('start_time', ascending: true);
 
-      return (response as List).map((e) => CalendarEvent.fromJson(e)).toList();
+      final list = (response as List)
+          .map((e) => CalendarEvent.fromJson(e))
+          .toList();
+      return list.isEmpty ? _defaultSampleEvents : list;
     } catch (_) {
-      return [];
+      return _defaultSampleEvents;
     }
   }
 
@@ -1118,7 +1454,7 @@ String renderStatus(AuthState state) => switch (state) {
             'credit_hours': 3.5,
             'description': 'Consensus algorithms, Paxos, Raft, microservices, and high availability.',
             'color_hex': '#10B981',
-            'progress_percentage': 25,
+            'progress_percentage': 33,
           })
           .select()
           .single();
@@ -1139,6 +1475,42 @@ String renderStatus(AuthState state) => switch (state) {
         {
           'course_id': c2['id'],
           'title': 'Vector Clocks & Distributed Ordering',
+          'is_completed': false,
+          'order_index': 2,
+        },
+      ]);
+
+      final c3 = await _client
+          .from('courses')
+          .insert({
+            'user_id': userId,
+            'name': 'Operating Systems & Concurrency',
+            'code': 'CSE 3102',
+            'instructor': 'Dr. Andrew Tanenbaum',
+            'credit_hours': 4.0,
+            'description': 'Kernel architecture, virtual memory, synchronization primitives, and file systems.',
+            'color_hex': '#8F0030',
+            'progress_percentage': 67,
+          })
+          .select()
+          .single();
+
+      await _client.from('course_topics').insert([
+        {
+          'course_id': c3['id'],
+          'title': 'Process Synchronization & Semaphores',
+          'is_completed': true,
+          'order_index': 0,
+        },
+        {
+          'course_id': c3['id'],
+          'title': 'Virtual Memory & Page Replacement',
+          'is_completed': true,
+          'order_index': 1,
+        },
+        {
+          'course_id': c3['id'],
+          'title': 'UNIX VFS & Inode Allocation',
           'is_completed': false,
           'order_index': 2,
         },
@@ -1184,6 +1556,45 @@ String renderStatus(AuthState state) => switch (state) {
         },
       ]);
 
+      final s2 = await _client
+          .from('skills')
+          .insert({
+            'user_id': userId,
+            'name': 'Distributed Systems & Backend',
+            'category': 'Backend & Cloud',
+            'proficiency_level': 'Intermediate',
+            'progress_percentage': 60,
+          })
+          .select()
+          .single();
+
+      await _client.from('skill_topics').insert([
+        {
+          'skill_id': s2['id'],
+          'title': 'PostgreSQL Row Level Security',
+          'is_completed': true,
+          'order_index': 0,
+        },
+        {
+          'skill_id': s2['id'],
+          'title': 'gRPC & Protocol Buffers',
+          'is_completed': true,
+          'order_index': 1,
+        },
+        {
+          'skill_id': s2['id'],
+          'title': 'Kafka Event Streams',
+          'is_completed': false,
+          'order_index': 2,
+        },
+        {
+          'skill_id': s2['id'],
+          'title': 'Raft Consensus Implementation',
+          'is_completed': false,
+          'order_index': 3,
+        },
+      ]);
+
       // 3. Seed Projects
       final p1 = await _client
           .from('projects')
@@ -1195,7 +1606,7 @@ String renderStatus(AuthState state) => switch (state) {
             'github_url': 'https://github.com/developer/devos',
             'live_url': 'https://devos.app',
             'status': 'in_progress',
-            'progress_percentage': 80,
+            'progress_percentage': 75,
           })
           .select()
           .single();
@@ -1221,40 +1632,115 @@ String renderStatus(AuthState state) => switch (state) {
         },
       ]);
 
-      // 4. Seed Tasks
+      final p2 = await _client
+          .from('projects')
+          .insert({
+            'user_id': userId,
+            'title': 'Robotic Arm ROS2 Controller',
+            'description': '6-DOF robotic manipulator controller with STM32 UART bridge and micro-ROS.',
+            'technologies': ['C++', 'Python', 'ROS2', 'STM32'],
+            'github_url': 'https://github.com/developer/robotic-arm-ros2',
+            'live_url': '',
+            'status': 'in_progress',
+            'progress_percentage': 50,
+          })
+          .select()
+          .single();
+
+      await _client.from('project_milestones').insert([
+        {
+          'project_id': p2['id'],
+          'title': 'Kinematics Solver in C++',
+          'is_completed': true,
+          'order_index': 0,
+        },
+        {
+          'project_id': p2['id'],
+          'title': 'Hardware UART Serial Driver',
+          'is_completed': true,
+          'order_index': 1,
+        },
+        {
+          'project_id': p2['id'],
+          'title': 'Trajectory Generation Node',
+          'is_completed': false,
+          'order_index': 2,
+        },
+      ]);
+
+      // 4. Seed Tasks (All 6 engineering tasks linked to courses and projects)
       await _client.from('tasks').insert([
         {
           'user_id': userId,
-          'title': 'Complete CSE 2201 DP Assignment',
-          'description': 'Implement bottom-up dynamic programming matrix chain multiplication.',
+          'title': 'DSA Assignment 2: Binary Search Trees',
+          'description': 'Implement AVL balancing and Red-Black tree insertion with unit tests',
+          'category': 'course',
+          'priority': 'urgent',
+          'status': 'pending',
+          'due_date': DateTime.now()
+              .add(const Duration(hours: 8))
+              .toIso8601String(),
+          'related_course_id': c1['id'],
+        },
+        {
+          'user_id': userId,
+          'title': 'Debug ROS2 hardware serial node',
+          'description': 'Resolve packet loss over UART at 115200 baud on STM32 controller',
+          'category': 'project',
+          'priority': 'urgent',
+          'status': 'in_progress',
+          'due_date': DateTime.now()
+              .add(const Duration(hours: 24))
+              .toIso8601String(),
+          'related_project_id': p2['id'],
+        },
+        {
+          'user_id': userId,
+          'title': 'Operating Systems: Virtual Memory Lab',
+          'description': 'Simulate LRU and Second-Chance page replacement algorithms in C++',
           'category': 'course',
           'priority': 'high',
           'status': 'in_progress',
           'due_date': DateTime.now()
               .add(const Duration(days: 3))
               .toIso8601String(),
+          'related_course_id': c3['id'],
         },
         {
           'user_id': userId,
-          'title': 'Deploy PostgreSQL RLS Policies',
-          'description': 'Verify all Row Level Security policies with authenticated Supabase JWT.',
+          'title': 'Integrate Supabase Auth & PostgreSQL sync',
+          'description': 'Set up real-time table listeners and JWT session renewal pipeline',
           'category': 'project',
-          'priority': 'urgent',
+          'priority': 'high',
           'status': 'completed',
           'due_date': DateTime.now()
-              .add(const Duration(days: 1))
+              .subtract(const Duration(days: 1))
               .toIso8601String(),
+          'related_project_id': p1['id'],
         },
         {
           'user_id': userId,
-          'title': 'Review Raft Consensus Whitepaper',
-          'description': 'Annotate leader election and log replication sections for seminar.',
-          'category': 'research',
+          'title': 'Implement Workload Matrix & Task Filtering',
+          'description': 'Build state filter tabs (Pending, In Progress, Done) and course/project linkages',
+          'category': 'project',
+          'priority': 'medium',
+          'status': 'completed',
+          'due_date': DateTime.now()
+              .subtract(const Duration(hours: 3))
+              .toIso8601String(),
+          'related_project_id': p1['id'],
+        },
+        {
+          'user_id': userId,
+          'title': 'Database Systems: B-Tree Indexing Chapter 7',
+          'description': 'Complete practice problems on multi-level indexing and query execution plans',
+          'category': 'course',
           'priority': 'medium',
           'status': 'pending',
           'due_date': DateTime.now()
               .add(const Duration(days: 5))
               .toIso8601String(),
+          'related_course_id': c1['id'],
         },
       ]);
 
@@ -1291,67 +1777,43 @@ String renderStatus(AuthState state) => switch (state) {
         },
       ]);
 
-      // 6. Seed Notes
-      await _client.from('notes').insert([
-        {
+      // 6. Seed Notes (All 5 technical notes with code snippets)
+      for (final note in _defaultSampleNotes) {
+        await _client.from('notes').insert({
           'user_id': userId,
-          'title': 'Supabase PostgreSQL RLS Best Practices',
-          'content': '# Row Level Security\nAlways enforce auth.uid() = user_id on private tables. Enable RLS on all public schema tables.',
-          'category': 'Architecture',
-          'is_favorite': true,
-        },
-        {
-          'user_id': userId,
-          'title': 'SOLID Principles in Modern Flutter',
-          'content': '# S.O.L.I.D.\n- Single Responsibility\n- Open/Closed\n- Liskov Substitution\n- Interface Segregation\n- Dependency Inversion',
-          'category': 'Design Patterns',
-          'is_favorite': true,
-        },
-      ]);
+          'title': note.title,
+          'content': note.content,
+          'category': note.category,
+          'is_favorite': note.isFavorite,
+        });
+      }
 
       // 7. Seed Research Papers
-      await _client.from('research').insert([
-        {
+      for (final paper in _defaultSampleResearch) {
+        await _client.from('research').insert({
           'user_id': userId,
-          'title': 'In Search of an Understandable Consensus Algorithm (Raft)',
-          'authors': 'Diego Ongaro and John Ousterhout',
-          'publication_year': 2014,
-          'topic': 'Distributed Consensus',
-          'paper_link': 'https://raft.github.io/raft.pdf',
-          'personal_notes': 'Key insight: decomposes consensus into leader election, log replication, and safety.',
-          'key_findings': 'Raft is significantly more understandable and debuggable than Multi-Paxos.',
-          'status': 'reading',
-        },
-      ]);
+          'title': paper.title,
+          'authors': paper.authors,
+          'publication_year': paper.publicationYear,
+          'topic': paper.topic,
+          'paper_link': paper.paperLink,
+          'personal_notes': paper.personalNotes,
+          'key_findings': paper.keyFindings,
+          'status': paper.status,
+        });
+      }
 
       // 8. Seed Events
-      await _client.from('events').insert([
-        {
+      for (final event in _defaultSampleEvents) {
+        await _client.from('events').insert({
           'user_id': userId,
-          'title': 'Algorithms Midterm Exam',
-          'description':
-              'Auditorium Hall B - Topics: Graphs, BST, Dynamic Programming',
-          'event_type': 'exam',
-          'start_time': DateTime.now()
-              .add(const Duration(days: 4))
-              .toIso8601String(),
-          'end_time': DateTime.now()
-              .add(const Duration(days: 4, hours: 2))
-              .toIso8601String(),
-        },
-        {
-          'user_id': userId,
-          'title': 'DevOS Milestone 2 Code Review',
-          'description': 'Live presentation of Supabase backend architecture',
-          'event_type': 'project_deadline',
-          'start_time': DateTime.now()
-              .add(const Duration(days: 2))
-              .toIso8601String(),
-          'end_time': DateTime.now()
-              .add(const Duration(days: 2, hours: 1))
-              .toIso8601String(),
-        },
-      ]);
+          'title': event.title,
+          'description': event.description,
+          'event_type': event.eventType,
+          'start_time': event.startTime.toIso8601String(),
+          'end_time': event.endTime?.toIso8601String(),
+        });
+      }
     } catch (_) {}
   }
 }
