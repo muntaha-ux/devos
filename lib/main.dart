@@ -19,6 +19,7 @@ import 'features/notes/notes_screen.dart';
 import 'features/skills/skills_screen.dart';
 import 'features/projects/projects_screen.dart';
 import 'features/profile/profile_screen.dart';
+import 'features/search/global_search_modal.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -265,54 +266,10 @@ class _DevOSMainShellState extends ConsumerState<DevOSMainShell> {
                     button: true,
                     child: InkWell(
                       onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (ctx) => AlertDialog(
-                            backgroundColor: AppColors.card(ctx),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
-                              side: BorderSide(
-                                color: AppColors.cardBorder(ctx),
-                              ),
-                            ),
-                            title: Text(
-                              'Search DevOS',
-                              style: GoogleFonts.inter(
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.textPrimary(ctx),
-                              ),
-                            ),
-                            content: TextField(
-                              autofocus: true,
-                              style: TextStyle(
-                                color: AppColors.textPrimary(ctx),
-                              ),
-                              decoration: InputDecoration(
-                                hintText: 'Search courses, skills, projects, notes...',
-                                hintStyle: TextStyle(
-                                  color: AppColors.textSecondary(ctx),
-                                ),
-                                prefixIcon: Icon(
-                                  Icons.search,
-                                  color: AppColors.textSecondary(ctx),
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(ctx),
-                                child: Text(
-                                  'Close',
-                                  style: GoogleFonts.jetBrainsMono(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                        showGlobalSearch(
+                          context,
+                          onNavigateToTab: (index) =>
+                              setState(() => _currentIndex = index),
                         );
                       },
                       borderRadius: BorderRadius.circular(12),
@@ -399,6 +356,44 @@ class _DevOSMainShellState extends ConsumerState<DevOSMainShell> {
               6,
               'Engineering Profile',
               Icons.account_circle_outlined,
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(
+                Icons.saved_search_rounded,
+                color: Color(0xFF1E56FF),
+              ),
+              title: Text(
+                'Workspace Search',
+                style: GoogleFonts.inter(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                  color: Colors.black87,
+                ),
+              ),
+              trailing: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: AppColors.brandDarkBanner,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  'SEMANTIC',
+                  style: GoogleFonts.jetBrainsMono(
+                    fontSize: 9,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                showGlobalSearch(
+                  context,
+                  onNavigateToTab: (index) =>
+                      setState(() => _currentIndex = index),
+                );
+              },
             ),
             const Divider(),
             ListTile(

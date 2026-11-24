@@ -1,0 +1,15 @@
+.dart_tool
+.git
+.github
+android
+ios
+linux
+macos
+windows
+test
+tool
+build/app
+build/ios
+build/linux
+build/macos
+build/windows

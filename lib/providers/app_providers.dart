@@ -314,6 +314,10 @@ class TasksNotifier extends StateNotifier<List<DevTask>> {
     state = state.where((t) => t.id != taskId).toList();
     await _db.deleteTask(taskId);
   }
+
+  void setTasks(List<DevTask> tasks) {
+    state = tasks;
+  }
 }
 
 final tasksProvider = StateNotifierProvider<TasksNotifier, List<DevTask>>((

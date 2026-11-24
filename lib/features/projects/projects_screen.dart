@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../core/services/semantic_search_service.dart';
 import '../../models/project_model.dart';
 import '../../models/task_model.dart';
 import '../../providers/app_providers.dart';
@@ -45,15 +46,10 @@ class _ProjectsScreenState extends ConsumerState<ProjectsScreen> {
     final allProjects = ref.watch(projectsProvider);
     final allTasks = ref.watch(tasksProvider);
 
-    // Filter projects by search query
+    // Filter projects by domain-aware semantic search query
     final projects = _searchQuery.isEmpty
         ? allProjects
-        : allProjects.where((p) {
-            final query = _searchQuery.toLowerCase();
-            return p.title.toLowerCase().contains(query) ||
-                p.description.toLowerCase().contains(query) ||
-                p.technologies.any((t) => t.toLowerCase().contains(query));
-          }).toList();
+        : SemanticSearchService.filterProjects(allProjects, _searchQuery);
 
     if (_selectedProjectIndex >= projects.length && projects.isNotEmpty) {
       _selectedProjectIndex = 0;

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../core/services/semantic_search_service.dart';
 import '../../models/task_model.dart';
 import '../../providers/app_providers.dart';
 import 'add_edit_task_modal.dart';
@@ -130,22 +131,8 @@ class _WorkloadScreenState extends ConsumerState<WorkloadScreen> {
         .where((t) => t.status != TaskStatus.completed)
         .length;
 
-    // Filter Tasks
-    final filteredTasks = tasks.where((task) {
-      // Search Query
-      if (_searchQuery.isNotEmpty) {
-        final query = _searchQuery.toLowerCase();
-        final matchTitle = task.title.toLowerCase().contains(query);
-        final matchDesc = task.description.toLowerCase().contains(query);
-        final matchCourse =
-            task.relatedCourseName?.toLowerCase().contains(query) ?? false;
-        final matchProject =
-            task.relatedProjectName?.toLowerCase().contains(query) ?? false;
-        if (!matchTitle && !matchDesc && !matchCourse && !matchProject) {
-          return false;
-        }
-      }
-
+    // Filter Tasks by state, category, and priority
+    final baseFilteredTasks = tasks.where((task) {
       // State Filter
       switch (_stateFilter) {
         case TaskStateFilter.pending:
@@ -185,6 +172,11 @@ class _WorkloadScreenState extends ConsumerState<WorkloadScreen> {
 
       return true;
     }).toList();
+
+    // Apply Domain-Aware Semantic Search Engine
+    final filteredTasks = _searchQuery.isEmpty
+        ? baseFilteredTasks
+        : SemanticSearchService.filterTasks(baseFilteredTasks, _searchQuery);
 
     return Container(
       color: AppColors.background(context),

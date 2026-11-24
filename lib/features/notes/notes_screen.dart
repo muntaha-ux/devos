@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../core/services/semantic_search_service.dart';
 import '../../models/note_model.dart';
 import '../../providers/app_providers.dart';
 import 'note_detail_screen.dart';
@@ -125,7 +126,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
     }
 
     // Filter Notes
-    final filteredNotes = notes.where((note) {
+    final baseFilteredNotes = notes.where((note) {
       // Starred Filter
       if (_starredOnly && !note.isFavorite) return false;
 
@@ -141,17 +142,13 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
         }
       }
 
-      // Search Query
-      if (_searchQuery.isNotEmpty) {
-        final query = _searchQuery.toLowerCase();
-        final matchTitle = note.title.toLowerCase().contains(query);
-        final matchContent = note.content.toLowerCase().contains(query);
-        final matchTags = note.tags.any((t) => t.toLowerCase().contains(query));
-        if (!matchTitle && !matchContent && !matchTags) return false;
-      }
-
       return true;
     }).toList();
+
+    // Apply Domain-Aware Semantic Search Engine
+    final filteredNotes = _searchQuery.isEmpty
+        ? baseFilteredNotes
+        : SemanticSearchService.filterNotes(baseFilteredNotes, _searchQuery);
 
     final totalNotes = notes.length;
     final totalFolders = allFolders.length - 1; // exclude 'All'

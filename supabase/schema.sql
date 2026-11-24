@@ -345,3 +345,23 @@ CREATE POLICY "Users can update their own avatar images" ON storage.objects
 
 CREATE POLICY "Users can delete their own avatar images" ON storage.objects
   FOR DELETE USING (bucket_id = 'avatars' AND auth.uid()::text = (storage.foldername(name))[1]);
+
+-- ============================================================================
+-- FULL-TEXT SEARCH & GIN INDEXES FOR SEMANTIC WORKSPACE SEARCH
+-- ============================================================================
+ALTER TABLE public.notes ADD COLUMN IF NOT EXISTS fts tsvector 
+  GENERATED ALWAYS AS (to_tsvector('english', coalesce(title, '') || ' ' || coalesce(content, '') || ' ' || coalesce(category, ''))) STORED;
+CREATE INDEX IF NOT EXISTS notes_fts_idx ON public.notes USING GIN (fts);
+
+ALTER TABLE public.tasks ADD COLUMN IF NOT EXISTS fts tsvector 
+  GENERATED ALWAYS AS (to_tsvector('english', coalesce(title, '') || ' ' || coalesce(description, '') || ' ' || coalesce(category, '') || ' ' || coalesce(priority, ''))) STORED;
+CREATE INDEX IF NOT EXISTS tasks_fts_idx ON public.tasks USING GIN (fts);
+
+ALTER TABLE public.courses ADD COLUMN IF NOT EXISTS fts tsvector 
+  GENERATED ALWAYS AS (to_tsvector('english', coalesce(name, '') || ' ' || coalesce(code, '') || ' ' || coalesce(instructor, '') || ' ' || coalesce(description, ''))) STORED;
+CREATE INDEX IF NOT EXISTS courses_fts_idx ON public.courses USING GIN (fts);
+
+ALTER TABLE public.projects ADD COLUMN IF NOT EXISTS fts tsvector 
+  GENERATED ALWAYS AS (to_tsvector('english', coalesce(title, '') || ' ' || coalesce(description, ''))) STORED;
+CREATE INDEX IF NOT EXISTS projects_fts_idx ON public.projects USING GIN (fts);
+

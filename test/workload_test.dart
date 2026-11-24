@@ -341,6 +341,11 @@ class MockTasksNotifier extends StateNotifier<List<DevTask>>
   Future<void> loadTasks() async {}
 
   @override
+  void setTasks(List<DevTask> tasks) {
+    state = tasks;
+  }
+
+  @override
   Future<void> toggleTaskStatus(String taskId) async {
     state = state.map((t) {
       if (t.id == taskId) {
