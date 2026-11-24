@@ -92,7 +92,9 @@ class SupabaseAuthRepository implements IAuthRepository {
           learningStreak: 1,
         );
 
-        await client.from('profiles').upsert(profile.toJson());
+        try {
+          await client.from('profiles').upsert(profile.toJson());
+        } catch (_) {}
         return AuthResult.success(profile);
       }
 
@@ -129,6 +131,11 @@ class SupabaseAuthRepository implements IAuthRepository {
     if (message.contains('Email not confirmed') ||
         message.contains('email_not_confirmed')) {
       return 'Email address is not confirmed yet. Please verify your email inbox or continue in Demo Mode.';
+    }
+    if (message.contains('row-level security') ||
+        message.contains('42501') ||
+        message.contains('security policy')) {
+      return 'Database access restricted by Row Level Security. Tap "Continue as Demo Student" to explore immediately.';
     }
     return message;
   }
@@ -179,8 +186,15 @@ class SupabaseAuthRepository implements IAuthRepository {
         learningStreak: 1,
       );
 
-      // Ensure profile row exists in public.profiles table
-      await client.from('profiles').upsert(profile.toJson());
+      // If an authenticated session was established immediately (e.g. autoconfirm enabled),
+      // persist profile row to public.profiles. If email confirmation is pending
+      // (response.session == null), client lacks JWT credentials to pass RLS,
+      // so the profile row is created upon first authenticated sign-in.
+      if (response.session != null) {
+        try {
+          await client.from('profiles').upsert(profile.toJson());
+        } catch (_) {}
+      }
 
       final requiresConfirmation = response.session == null;
       return AuthResult.success(

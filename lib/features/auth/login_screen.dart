@@ -180,9 +180,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       ref.read(profileProvider.notifier).setProfile(result.user!);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Account created! Welcome to DevOS, $fullName.'),
+          content: Text(
+            result.requiresEmailConfirmation
+                ? 'Account created! Please check your email ($email) to confirm. Welcome, $fullName!'
+                : 'Account created! Welcome to DevOS, $fullName.',
+          ),
           backgroundColor: AppColors.secondary,
-          duration: const Duration(seconds: 3),
+          duration: const Duration(seconds: 4),
         ),
       );
       widget.onLoginSuccess();
@@ -191,7 +195,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           result.errorMessage?.contains('CORS') == true ||
           result.errorMessage?.contains('Supabase') == true ||
           result.errorMessage?.contains('reach') == true ||
-          result.errorMessage?.contains('connection') == true;
+          result.errorMessage?.contains('connection') == true ||
+          result.errorMessage?.contains('Security') == true ||
+          result.errorMessage?.contains('policy') == true;
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
