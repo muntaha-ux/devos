@@ -68,6 +68,7 @@ class SupabaseDatabaseRepository {
         'major': meta['major'] ?? 'Computer Science & Engineering',
         'academic_year': meta['academic_year'] ?? '3rd Year (Junior)',
         'learning_streak': 1,
+        'bio': meta['bio'] ?? '',
       };
 
       await _client.from('profiles').upsert(initialProfile);
@@ -90,6 +91,7 @@ class SupabaseDatabaseRepository {
             'major': profile.major,
             'academic_year': profile.academicYear,
             'learning_streak': profile.learningStreak,
+            'bio': profile.bio,
           })
           .eq('id', userId);
     } catch (_) {}

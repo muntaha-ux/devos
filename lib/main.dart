@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +9,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'core/constants/supabase_config.dart';
 import 'core/theme/app_theme.dart';
 import 'core/constants/app_colors.dart';
+import 'models/profile_model.dart';
 import 'providers/app_providers.dart';
 import 'features/auth/login_screen.dart';
 import 'features/dashboard/dashboard_screen.dart';
@@ -16,6 +18,7 @@ import 'features/workload/workload_screen.dart';
 import 'features/notes/notes_screen.dart';
 import 'features/skills/skills_screen.dart';
 import 'features/projects/projects_screen.dart';
+import 'features/profile/profile_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -140,6 +143,64 @@ class DevOSMainShell extends ConsumerStatefulWidget {
 class _DevOSMainShellState extends ConsumerState<DevOSMainShell> {
   int _currentIndex = 0;
 
+  Widget _buildShellAvatar(UserProfile profile, double radius) {
+    if (profile.avatarUrl.startsWith('data:image')) {
+      try {
+        final commaIndex = profile.avatarUrl.indexOf(',');
+        final base64Data = commaIndex != -1
+            ? profile.avatarUrl.substring(commaIndex + 1)
+            : profile.avatarUrl;
+        final bytes = base64Decode(base64Data);
+        return CircleAvatar(
+          radius: radius,
+          backgroundImage: MemoryImage(bytes),
+        );
+      } catch (_) {}
+    } else if (profile.avatarUrl.startsWith('http')) {
+      return CircleAvatar(
+        radius: radius,
+        backgroundImage: NetworkImage(profile.avatarUrl),
+      );
+    } else if (profile.avatarUrl.startsWith('preset:')) {
+      return CircleAvatar(
+        radius: radius,
+        backgroundColor: const Color(0xFFDBEAFE),
+        child: Icon(
+          Icons.terminal_rounded,
+          size: radius * 1.1,
+          color: const Color(0xFF1E56FF),
+        ),
+      );
+    }
+
+    final cleanName = profile.fullName.trim();
+    String initials = 'DV';
+    if (cleanName.isNotEmpty) {
+      final parts =
+          cleanName.split(RegExp(r'\s+')).where((p) => p.isNotEmpty).toList();
+      if (parts.length >= 2) {
+        initials = '${parts.first[0]}${parts.last[0]}'.toUpperCase();
+      } else if (cleanName.length >= 2) {
+        initials = cleanName.substring(0, 2).toUpperCase();
+      } else {
+        initials = cleanName.toUpperCase();
+      }
+    }
+
+    return CircleAvatar(
+      radius: radius,
+      backgroundColor: const Color(0xFFE2C9B8),
+      child: Text(
+        initials,
+        style: GoogleFonts.jetBrainsMono(
+          color: Colors.black,
+          fontWeight: FontWeight.bold,
+          fontSize: radius * 0.7,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final profile = ref.watch(profileProvider);
@@ -153,6 +214,10 @@ class _DevOSMainShellState extends ConsumerState<DevOSMainShell> {
       const SkillsScreen(),
       const ProjectsScreen(),
       const NotesScreen(),
+      ProfileScreen(
+        onBackToDashboard: () => setState(() => _currentIndex = 0),
+        onLogout: widget.onLogout,
+      ),
     ];
 
     final showDevOSTopBar = _currentIndex == 0 || _currentIndex == 1;
@@ -176,26 +241,7 @@ class _DevOSMainShellState extends ConsumerState<DevOSMainShell> {
                       child: CircleAvatar(
                         radius: 18,
                         backgroundColor: Colors.black,
-                        child: CircleAvatar(
-                          radius: 17,
-                          backgroundColor: const Color(0xFFE2C9B8),
-                          child: Text(
-                            profile.fullName.trim().isNotEmpty
-                                ? (profile.fullName.trim().length >= 2
-                                          ? profile.fullName.trim().substring(
-                                              0,
-                                              2,
-                                            )
-                                          : profile.fullName.trim())
-                                      .toUpperCase()
-                                : 'DV',
-                            style: GoogleFonts.jetBrainsMono(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
+                        child: _buildShellAvatar(profile, 17),
                       ),
                     ),
                   ),
@@ -302,26 +348,31 @@ class _DevOSMainShellState extends ConsumerState<DevOSMainShell> {
               decoration: const BoxDecoration(
                 color: AppColors.brandDarkBanner,
               ),
+              onDetailsPressed: () {
+                Navigator.pop(context);
+                setState(() => _currentIndex = 6);
+              },
               accountName: Text(
                 profile.fullName,
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               accountEmail: Text(
                 profile.email,
-                style: const TextStyle(color: AppColors.primary),
+                style: const TextStyle(color: Color(0xFFF3C7D4)),
               ),
-              currentAccountPicture: CircleAvatar(
-                backgroundColor: AppColors.primary.withValues(alpha: 0.2),
-                child: Text(
-                  profile.fullName.trim().isNotEmpty
-                      ? (profile.fullName.trim().length >= 2
-                                ? profile.fullName.trim().substring(0, 2)
-                                : profile.fullName.trim())
-                            .toUpperCase()
-                      : 'DV',
-                  style: const TextStyle(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.bold,
+              currentAccountPicture: Semantics(
+                label: 'View Engineering Profile',
+                button: true,
+                child: InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                    setState(() => _currentIndex = 6);
+                  },
+                  borderRadius: BorderRadius.circular(40),
+                  child: CircleAvatar(
+                    radius: 38,
+                    backgroundColor: Colors.black,
+                    child: _buildShellAvatar(profile, 36),
                   ),
                 ),
               ),
@@ -343,6 +394,11 @@ class _DevOSMainShellState extends ConsumerState<DevOSMainShell> {
               5,
               'Notes & Knowledge Base',
               Icons.menu_book_rounded,
+            ),
+            _buildDrawerTile(
+              6,
+              'Engineering Profile',
+              Icons.account_circle_outlined,
             ),
             const Divider(),
             ListTile(

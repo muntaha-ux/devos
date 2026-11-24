@@ -7,6 +7,7 @@ class UserProfile {
   final String major;
   final String academicYear;
   final int learningStreak;
+  final String bio;
 
   UserProfile({
     required this.id,
@@ -17,6 +18,7 @@ class UserProfile {
     required this.major,
     required this.academicYear,
     required this.learningStreak,
+    this.bio = '',
   });
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
@@ -28,7 +30,8 @@ class UserProfile {
       institution: json['institution'] ?? 'University of Technology',
       major: json['major'] ?? 'Computer Science & Engineering',
       academicYear: json['academic_year'] ?? '3rd Year',
-      learningStreak: json['learning_streak'] ?? 12,
+      learningStreak: json['learning_streak'] ?? 1,
+      bio: json['bio'] ?? '',
     );
   }
 
@@ -41,6 +44,7 @@ class UserProfile {
     String? major,
     String? academicYear,
     int? learningStreak,
+    String? bio,
   }) {
     return UserProfile(
       id: id ?? this.id,
@@ -51,6 +55,7 @@ class UserProfile {
       major: major ?? this.major,
       academicYear: academicYear ?? this.academicYear,
       learningStreak: learningStreak ?? this.learningStreak,
+      bio: bio ?? this.bio,
     );
   }
 
@@ -64,6 +69,7 @@ class UserProfile {
       'major': major,
       'academic_year': academicYear,
       'learning_streak': learningStreak,
+      'bio': bio,
     };
   }
 }
