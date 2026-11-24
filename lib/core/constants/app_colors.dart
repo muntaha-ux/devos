@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// Centralized Design System Palette for DevOS
-/// Supports both Figma Studio Light mode and DevOS Obsidian Dark mode
+/// Single-Theme Light Palette based on Engineering Terminal & Figma Design
 class AppColors {
   AppColors._();
 
@@ -49,11 +49,8 @@ class AppColors {
   static const Color figmaSprintRust = Color(0xFF9A3412);
   static const Color figmaSprintSlate = Color(0xFF475569);
 
-  // ===================== OBSIDIAN DARK PALETTE =====================
-  static const Color backgroundDark = Color(0xFF0D1117);
-  static const Color surfaceDark = Color(0xFF161B22);
-  static const Color cardDark = Color(0xFF21262D);
-  static const Color cardBorderDark = Color(0xFF30363D);
+  // Deliberate brand dark surface within light theme
+  static const Color brandDarkBanner = Color(0xFF352554);
 
   // General theme palette
   static const Color backgroundLight = Color(0xFFD6BDBD);
@@ -70,10 +67,6 @@ class AppColors {
   static const Color accentBlue = Color(0xFF3B82F6);
 
   // Text Colors
-  static const Color textPrimaryDark = Color(0xFFF0F6FC);
-  static const Color textSecondaryDark = Color(0xFF8B949E);
-  static const Color textMutedDark = Color(0xFF6E7681);
-
   static const Color textPrimaryLight = Color(0xFF181818);
   static const Color textSecondaryLight = Color(0xFF333333);
   static const Color textMutedLight = Color(0xFF666666);
@@ -84,36 +77,20 @@ class AppColors {
   static const Color priorityHigh = Color(0xFFF59E0B);
   static const Color priorityUrgent = Color(0xFFEF4444);
 
-  // ===================== ADAPTIVE THEME HELPERS =====================
-  static bool isDark(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark;
-  }
+  // ===================== STATIC LIGHT THEME HELPERS =====================
+  // All helpers return light design tokens directly.
 
-  static Color background(BuildContext context) {
-    return isDark(context) ? backgroundDark : figmaBackground;
-  }
+  static Color background([BuildContext? context]) => figmaBackground;
 
-  static Color card(BuildContext context) {
-    return isDark(context) ? cardDark : cardLight;
-  }
+  static Color card([BuildContext? context]) => cardLight;
 
-  static Color cardBorder(BuildContext context) {
-    return isDark(context) ? cardBorderDark : cardBorderLight;
-  }
+  static Color cardBorder([BuildContext? context]) => cardBorderLight;
 
-  static Color textPrimary(BuildContext context) {
-    return isDark(context) ? textPrimaryDark : textPrimaryLight;
-  }
+  static Color textPrimary([BuildContext? context]) => textPrimaryLight;
 
-  static Color textSecondary(BuildContext context) {
-    return isDark(context) ? textSecondaryDark : textSecondaryLight;
-  }
+  static Color textSecondary([BuildContext? context]) => textSecondaryLight;
 
-  static Color textHeading(BuildContext context) {
-    return isDark(context) ? const Color(0xFFF472B6) : figmaMaroonText;
-  }
+  static Color textHeading([BuildContext? context]) => figmaMaroonText;
 
-  static Color bannerBackground(BuildContext context, Color lightColor) {
-    return isDark(context) ? cardDark : lightColor;
-  }
+  static Color bannerBackground(BuildContext? context, Color lightColor) => lightColor;
 }

@@ -234,6 +234,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                           Text(
                             'MARKDOWN NOTEBOOK & SNIPPET LIBRARY',
@@ -242,6 +243,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                               fontSize: 9,
                               fontWeight: FontWeight.w600,
                             ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),
@@ -368,7 +370,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
 
               // Search Bar
               Container(
-                height: 44,
+                constraints: const BoxConstraints(minHeight: 44),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(8),
@@ -420,12 +422,15 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                     color: Color(0xFF333333),
                   ),
                   const SizedBox(width: 6),
-                  Text(
-                    'Categorized Folders:',
-                    style: GoogleFonts.jetBrainsMono(
-                      color: Colors.black,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
+                  Flexible(
+                    child: Text(
+                      'Categorized Folders:',
+                      style: GoogleFonts.jetBrainsMono(
+                        color: Colors.black,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
@@ -503,23 +508,28 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.filter_alt_outlined,
-                          size: 16,
-                          color: Color(0xFF333333),
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          'Multi-Tag Filter:',
-                          style: GoogleFonts.jetBrainsMono(
-                            color: Colors.black,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
+                    Expanded(
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.filter_alt_outlined,
+                            size: 16,
+                            color: Color(0xFF333333),
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 6),
+                          Flexible(
+                            child: Text(
+                              'Multi-Tag Filter:',
+                              style: GoogleFonts.jetBrainsMono(
+                                color: Colors.black,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     if (_selectedTags.isNotEmpty)
                       InkWell(
@@ -647,20 +657,27 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'Technical Notes (${filteredNotes.length})',
-                    style: GoogleFonts.inter(
-                      color: AppColors.figmaTextRed,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: Text(
+                      'Technical Notes (${filteredNotes.length})',
+                      style: GoogleFonts.inter(
+                        color: AppColors.figmaTextRed,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  Text(
-                    'FOLDER: ${_selectedFolder.toUpperCase()}',
-                    style: GoogleFonts.jetBrainsMono(
-                      color: Colors.black54,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Text(
+                      'FOLDER: ${_selectedFolder.toUpperCase()}',
+                      style: GoogleFonts.jetBrainsMono(
+                        color: Colors.black54,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
@@ -695,7 +712,6 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
     required Color valueColor,
     required VoidCallback onTap,
   }) {
-    final isDark = AppColors.isDark(context);
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
@@ -712,10 +728,11 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
             Text(
               label,
               style: GoogleFonts.jetBrainsMono(
-                color: isDark ? const Color(0xFF8B949E) : Colors.black87,
+                color: Colors.black87,
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
               ),
+              overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 6),
             Text(
@@ -725,6 +742,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
@@ -734,7 +752,6 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
 
   Widget _buildFolderPill(String folder, int count) {
     final isSelected = _selectedFolder == folder && !_starredOnly;
-    final isDark = AppColors.isDark(context);
     return InkWell(
       onTap: () {
         setState(() {
@@ -747,9 +764,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
         duration: const Duration(milliseconds: 180),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
         decoration: BoxDecoration(
-          color: isSelected
-              ? AppColors.figmaBottomNav
-              : (isDark ? const Color(0xFF21262D) : Colors.white),
+          color: isSelected ? AppColors.figmaBottomNav : Colors.white,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: isSelected
@@ -766,17 +781,13 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                   ? Icons.folder_copy_rounded
                   : Icons.folder_outlined,
               size: 14,
-              color: isSelected
-                  ? Colors.white
-                  : (isDark ? const Color(0xFFC9D1D9) : Colors.black87),
+              color: isSelected ? Colors.white : Colors.black87,
             ),
             const SizedBox(width: 5),
             Text(
               folder,
               style: GoogleFonts.jetBrainsMono(
-                color: isSelected
-                    ? Colors.white
-                    : (isDark ? const Color(0xFFC9D1D9) : Colors.black87),
+                color: isSelected ? Colors.white : Colors.black87,
                 fontSize: 11,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
               ),
@@ -787,17 +798,13 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
               decoration: BoxDecoration(
                 color: isSelected
                     ? Colors.white24
-                    : (isDark
-                          ? const Color(0xFF30363D)
-                          : const Color(0xFFE5E7EB)),
+                    : const Color(0xFFE5E7EB),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
                 '$count',
                 style: GoogleFonts.jetBrainsMono(
-                  color: isSelected
-                      ? Colors.white
-                      : (isDark ? const Color(0xFFE6EDF3) : Colors.black87),
+                  color: isSelected ? Colors.white : Colors.black87,
                   fontSize: 10,
                   fontWeight: FontWeight.bold,
                 ),
@@ -811,7 +818,6 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
 
   Widget _buildNoteCard(Note note) {
     final hasCode = note.content.contains('```');
-    final isDark = AppColors.isDark(context);
 
     // Extract first non-heading preview line
     String previewText =
@@ -838,7 +844,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
           border: Border.all(color: AppColors.cardBorder(context), width: 1),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
+              color: Colors.black.withValues(alpha: 0.04),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
@@ -851,30 +857,34 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 7,
-                        vertical: 3,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.figmaDarkPurpleBanner,
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(
-                          color: const Color(0xFF333333),
-                          width: 0.5,
+                Expanded(
+                  child: Row(
+                    children: [
+                      Flexible(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 7,
+                            vertical: 3,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.figmaDarkPurpleBanner,
+                            borderRadius: BorderRadius.circular(4),
+                            border: Border.all(
+                              color: const Color(0xFF333333),
+                              width: 0.5,
+                            ),
+                          ),
+                          child: Text(
+                            '📁 ${note.category.toUpperCase()}',
+                            style: GoogleFonts.jetBrainsMono(
+                              color: const Color(0xFFD6BCFA),
+                              fontSize: 9,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       ),
-                      child: Text(
-                        '📁 ${note.category.toUpperCase()}',
-                        style: GoogleFonts.jetBrainsMono(
-                          color: const Color(0xFFD6BCFA),
-                          fontSize: 9,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
                     if (hasCode) ...[
                       const SizedBox(width: 6),
                       Container(
@@ -912,6 +922,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                     ],
                   ],
                 ),
+              ),
                 Row(
                   children: [
                     InkWell(
@@ -932,7 +943,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                         size: 20,
                         color: note.isFavorite
                             ? const Color(0xFFF59E0B)
-                            : (isDark ? Colors.white38 : Colors.black45),
+                            : Colors.black45,
                       ),
                     ),
                   ],
@@ -945,7 +956,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
             Text(
               note.title,
               style: GoogleFonts.inter(
-                color: isDark ? const Color(0xFFE6EDF3) : Colors.black,
+                color: Colors.black,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
@@ -957,7 +968,7 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
               Text(
                 previewText,
                 style: GoogleFonts.inter(
-                  color: isDark ? const Color(0xFF8B949E) : Colors.black87,
+                  color: Colors.black87,
                   fontSize: 12,
                 ),
                 maxLines: 2,
@@ -977,23 +988,17 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
-                      color: isDark
-                          ? const Color(0xFF21262D)
-                          : const Color(0xFFE5E7EB),
+                      color: const Color(0xFFE5E7EB),
                       borderRadius: BorderRadius.circular(4),
                       border: Border.all(
-                        color: isDark
-                            ? const Color(0xFF30363D)
-                            : const Color(0xFF333333),
+                        color: const Color(0xFF333333),
                         width: 0.5,
                       ),
                     ),
                     child: Text(
                       t,
                       style: GoogleFonts.jetBrainsMono(
-                        color: isDark
-                            ? const Color(0xFFC9D1D9)
-                            : Colors.black87,
+                        color: Colors.black87,
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
                       ),
@@ -1002,8 +1007,8 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
                 }).toList(),
               ),
             const SizedBox(height: 10),
-            Divider(
-              color: isDark ? const Color(0xFF30363D) : const Color(0xFFD1D5DB),
+            const Divider(
+              color: Color(0xFFD1D5DB),
               thickness: 0.8,
             ),
             const SizedBox(height: 6),
@@ -1012,39 +1017,45 @@ class _NotesScreenState extends ConsumerState<NotesScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                InkWell(
-                  onTap: () => _openDetail(note),
-                  borderRadius: BorderRadius.circular(6),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 5,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.figmaBottomNav,
-                      borderRadius: BorderRadius.circular(6),
-                      border: Border.all(
-                        color: const Color(0xFF333333),
-                        width: 1,
+                Flexible(
+                  child: InkWell(
+                    onTap: () => _openDetail(note),
+                    borderRadius: BorderRadius.circular(6),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
                       ),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.menu_book_rounded,
-                          size: 14,
-                          color: Colors.white,
+                      decoration: BoxDecoration(
+                        color: AppColors.figmaBottomNav,
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(
+                          color: const Color(0xFF333333),
+                          width: 1,
                         ),
-                        const SizedBox(width: 5),
-                        Text(
-                          'READ NOTEBOOK',
-                          style: GoogleFonts.jetBrainsMono(
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.menu_book_rounded,
+                            size: 14,
                             color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 5),
+                          Flexible(
+                            child: Text(
+                              'READ NOTEBOOK',
+                              style: GoogleFonts.jetBrainsMono(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

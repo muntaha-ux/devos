@@ -12,13 +12,12 @@ import 'package:devos/features/projects/projects_screen.dart';
 import 'package:devos/features/workload/workload_screen.dart';
 import 'package:devos/features/notes/notes_screen.dart';
 
-Widget wrapForGolden(Widget child, {ThemeMode mode = ThemeMode.light, Size size = const Size(412, 850)}) {
+Widget wrapForGolden(Widget child, {Size size = const Size(412, 850)}) {
   return ProviderScope(
     child: MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: mode,
+      theme: AppTheme.theme,
+      themeMode: ThemeMode.light,
       home: Scaffold(
         body: SizedBox(
           width: size.width,
@@ -32,21 +31,20 @@ Widget wrapForGolden(Widget child, {ThemeMode mode = ThemeMode.light, Size size 
 
 void main() {
   setUpAll(() {
-    GoogleFonts.config.allowRuntimeFetching = false;
+    GoogleFonts.config.allowRuntimeFetching = true;
     final goldensDir = Directory('test/design_audit/goldens');
     if (!goldensDir.existsSync()) {
       goldensDir.createSync(recursive: true);
     }
   });
 
-  group('Phase 1D: Visual Evidence & Golden Capture', () {
-    testWidgets('Capture LoginScreen Goldens (Light & Dark)', (tester) async {
+  group('Visual Evidence & Golden Capture (Light Only)', () {
+    testWidgets('Capture LoginScreen Goldens (Light)', (tester) async {
       tester.view.physicalSize = const Size(824, 1700);
       tester.view.devicePixelRatio = 2.0;
 
-      // 1. Light Mode
       await tester.pumpWidget(
-        wrapForGolden(LoginScreen(onLoginSuccess: () {}), mode: ThemeMode.light),
+        wrapForGolden(LoginScreen(onLoginSuccess: () {})),
       );
       await tester.pumpAndSettle();
       await expectLater(
@@ -54,27 +52,16 @@ void main() {
         matchesGoldenFile('goldens/login_screen_light.png'),
       );
 
-      // 2. Dark Mode
-      await tester.pumpWidget(
-        wrapForGolden(LoginScreen(onLoginSuccess: () {}), mode: ThemeMode.dark),
-      );
-      await tester.pumpAndSettle();
-      await expectLater(
-        find.byType(MaterialApp),
-        matchesGoldenFile('goldens/login_screen_dark.png'),
-      );
-
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
     });
 
-    testWidgets('Capture DashboardScreen Goldens (Light & Dark)', (tester) async {
+    testWidgets('Capture DashboardScreen Goldens (Light)', (tester) async {
       tester.view.physicalSize = const Size(824, 1700);
       tester.view.devicePixelRatio = 2.0;
 
-      // Light
       await tester.pumpWidget(
-        wrapForGolden(DashboardScreen(onNavigateToTab: (_) {}), mode: ThemeMode.light),
+        wrapForGolden(DashboardScreen(onNavigateToTab: (_) {})),
       );
       await tester.pumpAndSettle();
       await expectLater(
@@ -82,27 +69,16 @@ void main() {
         matchesGoldenFile('goldens/dashboard_screen_light.png'),
       );
 
-      // Dark
-      await tester.pumpWidget(
-        wrapForGolden(DashboardScreen(onNavigateToTab: (_) {}), mode: ThemeMode.dark),
-      );
-      await tester.pumpAndSettle();
-      await expectLater(
-        find.byType(MaterialApp),
-        matchesGoldenFile('goldens/dashboard_screen_dark.png'),
-      );
-
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
     });
 
-    testWidgets('Capture WorkloadScreen Goldens (Light & Dark)', (tester) async {
+    testWidgets('Capture WorkloadScreen Goldens (Light)', (tester) async {
       tester.view.physicalSize = const Size(824, 1700);
       tester.view.devicePixelRatio = 2.0;
 
-      // Light
       await tester.pumpWidget(
-        wrapForGolden(const WorkloadScreen(), mode: ThemeMode.light),
+        wrapForGolden(const WorkloadScreen()),
       );
       await tester.pumpAndSettle();
       await expectLater(
@@ -110,27 +86,16 @@ void main() {
         matchesGoldenFile('goldens/workload_screen_light.png'),
       );
 
-      // Dark
-      await tester.pumpWidget(
-        wrapForGolden(const WorkloadScreen(), mode: ThemeMode.dark),
-      );
-      await tester.pumpAndSettle();
-      await expectLater(
-        find.byType(MaterialApp),
-        matchesGoldenFile('goldens/workload_screen_dark.png'),
-      );
-
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
     });
 
-    testWidgets('Capture NotesScreen Goldens (Light & Dark)', (tester) async {
+    testWidgets('Capture NotesScreen Goldens (Light)', (tester) async {
       tester.view.physicalSize = const Size(824, 1700);
       tester.view.devicePixelRatio = 2.0;
 
-      // Light
       await tester.pumpWidget(
-        wrapForGolden(const NotesScreen(), mode: ThemeMode.light),
+        wrapForGolden(const NotesScreen()),
       );
       await tester.pumpAndSettle();
       await expectLater(
@@ -138,27 +103,16 @@ void main() {
         matchesGoldenFile('goldens/notes_screen_light.png'),
       );
 
-      // Dark
-      await tester.pumpWidget(
-        wrapForGolden(const NotesScreen(), mode: ThemeMode.dark),
-      );
-      await tester.pumpAndSettle();
-      await expectLater(
-        find.byType(MaterialApp),
-        matchesGoldenFile('goldens/notes_screen_dark.png'),
-      );
-
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
     });
 
-    testWidgets('Capture CoursesScreen Goldens (Light & Dark)', (tester) async {
+    testWidgets('Capture CoursesScreen Goldens (Light)', (tester) async {
       tester.view.physicalSize = const Size(824, 1700);
       tester.view.devicePixelRatio = 2.0;
 
-      // Light
       await tester.pumpWidget(
-        wrapForGolden(const CoursesScreen(), mode: ThemeMode.light),
+        wrapForGolden(const CoursesScreen()),
       );
       await tester.pumpAndSettle();
       await expectLater(
@@ -166,27 +120,16 @@ void main() {
         matchesGoldenFile('goldens/courses_screen_light.png'),
       );
 
-      // Dark
-      await tester.pumpWidget(
-        wrapForGolden(const CoursesScreen(), mode: ThemeMode.dark),
-      );
-      await tester.pumpAndSettle();
-      await expectLater(
-        find.byType(MaterialApp),
-        matchesGoldenFile('goldens/courses_screen_dark.png'),
-      );
-
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
     });
 
-    testWidgets('Capture ProjectsScreen Goldens (Light & Dark)', (tester) async {
+    testWidgets('Capture ProjectsScreen Goldens (Light)', (tester) async {
       tester.view.physicalSize = const Size(824, 1700);
       tester.view.devicePixelRatio = 2.0;
 
-      // Light
       await tester.pumpWidget(
-        wrapForGolden(const ProjectsScreen(), mode: ThemeMode.light),
+        wrapForGolden(const ProjectsScreen()),
       );
       await tester.pumpAndSettle();
       await expectLater(
@@ -194,42 +137,21 @@ void main() {
         matchesGoldenFile('goldens/projects_screen_light.png'),
       );
 
-      // Dark
-      await tester.pumpWidget(
-        wrapForGolden(const ProjectsScreen(), mode: ThemeMode.dark),
-      );
-      await tester.pumpAndSettle();
-      await expectLater(
-        find.byType(MaterialApp),
-        matchesGoldenFile('goldens/projects_screen_dark.png'),
-      );
-
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
     });
 
-    testWidgets('Capture SkillsScreen Goldens (Light & Dark)', (tester) async {
+    testWidgets('Capture SkillsScreen Goldens (Light)', (tester) async {
       tester.view.physicalSize = const Size(824, 1700);
       tester.view.devicePixelRatio = 2.0;
 
-      // Light
       await tester.pumpWidget(
-        wrapForGolden(const SkillsScreen(), mode: ThemeMode.light),
+        wrapForGolden(const SkillsScreen()),
       );
       await tester.pumpAndSettle();
       await expectLater(
         find.byType(MaterialApp),
         matchesGoldenFile('goldens/skills_screen_light.png'),
-      );
-
-      // Dark
-      await tester.pumpWidget(
-        wrapForGolden(const SkillsScreen(), mode: ThemeMode.dark),
-      );
-      await tester.pumpAndSettle();
-      await expectLater(
-        find.byType(MaterialApp),
-        matchesGoldenFile('goldens/skills_screen_dark.png'),
       );
 
       addTearDown(tester.view.resetPhysicalSize);

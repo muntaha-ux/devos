@@ -233,12 +233,12 @@ class MarkdownRenderer extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10.0),
       decoration: BoxDecoration(
-        color: const Color(0xFF181B20),
+        color: const Color(0xFFF8FAFC),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFF333333), width: 1.2),
+        border: Border.all(color: const Color(0xFFCBD5E1), width: 1.2),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.15),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -251,10 +251,10 @@ class MarkdownRenderer extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
             decoration: const BoxDecoration(
-              color: Color(0xFF101216),
+              color: Color(0xFFEDF2F7),
               borderRadius: BorderRadius.vertical(top: Radius.circular(9)),
               border: Border(
-                bottom: BorderSide(color: Color(0xFF282C34), width: 1),
+                bottom: BorderSide(color: Color(0xFFE2E8F0), width: 1),
               ),
             ),
             child: Row(
@@ -295,14 +295,14 @@ class MarkdownRenderer extends StatelessWidget {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF202530),
+                        color: const Color(0xFFE2E8F0),
                         borderRadius: BorderRadius.circular(4),
-                        border: Border.all(color: Colors.white12),
+                        border: Border.all(color: const Color(0xFFCBD5E1)),
                       ),
                       child: Text(
                         language.toUpperCase(),
                         style: GoogleFonts.jetBrainsMono(
-                          color: const Color(0xFFD6BCFA),
+                          color: const Color(0xFF334155),
                           fontSize: 9,
                           fontWeight: FontWeight.bold,
                         ),
@@ -332,14 +332,14 @@ class MarkdownRenderer extends StatelessWidget {
                       children: [
                         const Icon(
                           Icons.copy_rounded,
-                          color: Colors.white70,
+                          color: Color(0xFF475569),
                           size: 13,
                         ),
                         const SizedBox(width: 4),
                         Text(
                           'COPY',
                           style: GoogleFonts.jetBrainsMono(
-                            color: Colors.white70,
+                            color: const Color(0xFF475569),
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
                           ),
@@ -352,7 +352,7 @@ class MarkdownRenderer extends StatelessWidget {
             ),
           ),
 
-          // Code Body with Syntax Coloring
+          // Code Body with Light Syntax Coloring
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.all(14.0),
@@ -374,7 +374,7 @@ class MarkdownRenderer extends StatelessWidget {
             style: GoogleFonts.jetBrainsMono(
               fontSize: 12,
               height: 1.45,
-              color: const Color(0xFFE2E8F0),
+              color: const Color(0xFF1E293B),
             ),
             children: _highlightLine(line, lang.toLowerCase()),
           ),
@@ -396,7 +396,7 @@ class MarkdownRenderer extends StatelessWidget {
         TextSpan(
           text: line,
           style: const TextStyle(
-            color: Color(0xFF94A3B8),
+            color: Color(0xFF64748B),
             fontStyle: FontStyle.italic,
           ),
         ),
@@ -413,7 +413,7 @@ class MarkdownRenderer extends StatelessWidget {
         spans.add(TextSpan(text: line.substring(lastIdx, idx)));
       }
 
-      Color wordColor = const Color(0xFFE2E8F0);
+      Color wordColor = const Color(0xFF1E293B);
       FontWeight weight = FontWeight.normal;
 
       final lower = word.toLowerCase();
@@ -459,12 +459,12 @@ class MarkdownRenderer extends StatelessWidget {
         'null',
         'nullptr',
       }.contains(lower)) {
-        wordColor = const Color(0xFF38BDF8); // Cyan
+        wordColor = const Color(0xFF0369A1); // Deep Ocean Blue
         weight = FontWeight.bold;
       }
       // Types & Classes
       else if (RegExp(r'^[A-Z][a-zA-Z0-9]*$').hasMatch(word)) {
-        wordColor = const Color(0xFFFBBF24); // Amber / Yellow
+        wordColor = const Color(0xFFB45309); // Amber / Bronze
         weight = FontWeight.w600;
       }
       // String Literals
@@ -472,11 +472,11 @@ class MarkdownRenderer extends StatelessWidget {
           word.startsWith('"') ||
           word.endsWith("'") ||
           word.endsWith('"')) {
-        wordColor = const Color(0xFF34D399); // Emerald
+        wordColor = const Color(0xFF15803D); // Emerald Green
       }
       // Numbers
       else if (RegExp(r'^\d+(\.\d+)?$').hasMatch(word)) {
-        wordColor = const Color(0xFFF472B6); // Pink
+        wordColor = const Color(0xFFBE185D); // Crimson Pink
       }
 
       spans.add(

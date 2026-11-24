@@ -66,7 +66,7 @@ class _SkillsScreenState extends ConsumerState<SkillsScreen> {
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.isDark(ctx) ? const Color(0xFF2E6316) : AppColors.figmaForestBanner,
+              backgroundColor: AppColors.figmaForestBanner,
               foregroundColor: Colors.white,
             ),
             onPressed: () {
@@ -98,7 +98,6 @@ class _SkillsScreenState extends ConsumerState<SkillsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = AppColors.isDark(context);
     final skills = ref.watch(skillsProvider);
 
     if (_selectedSkillIndex >= skills.length && skills.isNotEmpty) {
@@ -119,36 +118,40 @@ class _SkillsScreenState extends ConsumerState<SkillsScreen> {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF1E2E16) : AppColors.figmaForestBanner,
+                color: AppColors.figmaForestBanner,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: isDark ? const Color(0xFF3F6212) : const Color(0xFF333333),
+                  color: const Color(0xFF333333),
                   width: 1,
                 ),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Skill Matrix',
-                        style: GoogleFonts.inter(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Skill Matrix',
+                          style: GoogleFonts.inter(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      Text(
-                        'ENGINEERING PROFICIENCY',
-                        style: GoogleFonts.jetBrainsMono(
-                          color: const Color(0xFFBBF7D0),
-                          fontSize: 9,
-                          fontWeight: FontWeight.w600,
+                        Text(
+                          'ENGINEERING PROFICIENCY',
+                          style: GoogleFonts.jetBrainsMono(
+                            color: const Color(0xFFBBF7D0),
+                            fontSize: 9,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   Semantics(
                     label: 'Add Skill',
@@ -161,13 +164,13 @@ class _SkillsScreenState extends ConsumerState<SkillsScreen> {
                         height: 44,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF365314) : AppColors.figmaPlusBtn,
+                          color: AppColors.figmaPlusBtn,
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
                         ),
-                        child: Icon(
+                        child: const Icon(
                           Icons.add,
-                          color: isDark ? Colors.white : Colors.black,
+                          color: Colors.black,
                           size: 20,
                         ),
                       ),
@@ -196,14 +199,10 @@ class _SkillsScreenState extends ConsumerState<SkillsScreen> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                           decoration: BoxDecoration(
-                            color: isSelected
-                                ? (isDark ? const Color(0xFF0284C7) : AppColors.figmaCyanCard)
-                                : (isDark ? const Color(0xFF1E2433) : Colors.white),
+                            color: isSelected ? AppColors.figmaCyanCard : Colors.white,
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(
-                              color: isSelected
-                                  ? Colors.transparent
-                                  : (isDark ? const Color(0xFF384358) : const Color(0xFF333333)),
+                              color: isSelected ? Colors.transparent : const Color(0xFF333333),
                               width: 1,
                             ),
                           ),
@@ -211,7 +210,7 @@ class _SkillsScreenState extends ConsumerState<SkillsScreen> {
                             child: Text(
                               s.name,
                               style: GoogleFonts.jetBrainsMono(
-                                color: isSelected ? Colors.white : (isDark ? Colors.white70 : Colors.black87),
+                                color: isSelected ? Colors.white : Colors.black87,
                                 fontSize: 12,
                                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
                               ),
@@ -234,7 +233,7 @@ class _SkillsScreenState extends ConsumerState<SkillsScreen> {
                 level: _formatLevel(activeSkill.progressPercentage),
                 percentage: activeSkill.progressPercentage,
                 category: activeSkill.category,
-                backgroundColor: isDark ? const Color(0xFF1E293B) : AppColors.figmaPurpleCard,
+                backgroundColor: AppColors.figmaPurpleCard,
                 onEdit: () => _showAddEditModal(context, activeSkill),
               ),
             ] else ...[
@@ -276,14 +275,18 @@ class _SkillsScreenState extends ConsumerState<SkillsScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    '${activeSkill.name} Modules',
-                    style: GoogleFonts.inter(
-                      color: isDark ? const Color(0xFFF472B6) : const Color(0xFFD12631),
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: Text(
+                      '${activeSkill.name} Modules',
+                      style: GoogleFonts.inter(
+                        color: const Color(0xFFD12631),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
+                  const SizedBox(width: 8),
                   Text(
                     '${activeSkill.topics.where((t) => t.isCompleted).length}/${activeSkill.topics.length} Done',
                     style: GoogleFonts.jetBrainsMono(
@@ -295,7 +298,7 @@ class _SkillsScreenState extends ConsumerState<SkillsScreen> {
                 ],
               ),
               const SizedBox(height: 4),
-              Divider(color: isDark ? const Color(0xFF384358) : const Color(0xFFA69090), thickness: 1),
+              const Divider(color: Color(0xFFA69090), thickness: 1),
               const SizedBox(height: 14),
 
               // Dynamic Sub-topics List
@@ -315,12 +318,10 @@ class _SkillsScreenState extends ConsumerState<SkillsScreen> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                         decoration: BoxDecoration(
-                          color: isDark
-                              ? (isAlt ? const Color(0xFF1E2822) : const Color(0xFF261E38))
-                              : (isAlt ? AppColors.figmaGreenSubtopic : AppColors.figmaPurpleCard),
+                          color: isAlt ? AppColors.figmaGreenSubtopic : AppColors.figmaPurpleCard,
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
-                            color: isDark ? Colors.white12 : const Color(0xFF333333),
+                            color: const Color(0xFF333333),
                             width: 1,
                           ),
                         ),
@@ -390,11 +391,11 @@ class _SkillsScreenState extends ConsumerState<SkillsScreen> {
                 height: 44,
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: isDark ? const Color(0xFF0F172A) : AppColors.figmaAddBtn,
+                    backgroundColor: AppColors.figmaAddBtn,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
-                      side: BorderSide(color: isDark ? const Color(0xFF334155) : const Color(0xFF333333)),
+                      side: const BorderSide(color: Color(0xFF333333)),
                     ),
                     elevation: 0,
                   ),
@@ -426,7 +427,6 @@ class _SkillsScreenState extends ConsumerState<SkillsScreen> {
     required Color backgroundColor,
     required VoidCallback onEdit,
   }) {
-    final isDark = AppColors.isDark(context);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(18.0),
@@ -434,7 +434,7 @@ class _SkillsScreenState extends ConsumerState<SkillsScreen> {
         color: backgroundColor,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: isDark ? const Color(0xFF475569) : const Color(0xFF333333),
+          color: const Color(0xFF333333),
           width: 1,
         ),
       ),
@@ -444,41 +444,46 @@ class _SkillsScreenState extends ConsumerState<SkillsScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.35),
-                      borderRadius: BorderRadius.circular(6),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
-                    ),
-                    child: Text(
-                      level,
-                      style: GoogleFonts.jetBrainsMono(
-                        color: const Color(0xFFFDBA74),
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
+              Expanded(
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.35),
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+                      ),
+                      child: Text(
+                        level,
+                        style: GoogleFonts.jetBrainsMono(
+                          color: const Color(0xFFFDBA74),
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Text(
-                      category.toUpperCase(),
-                      style: GoogleFonts.jetBrainsMono(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          category.toUpperCase(),
+                          style: GoogleFonts.jetBrainsMono(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               IconButton(
                 icon: const Icon(Icons.edit_outlined, color: Colors.white70, size: 18),

@@ -76,7 +76,6 @@ class CourseDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isDark = AppColors.isDark(context);
     final courses = ref.watch(coursesProvider);
     final currentCourse = courses.firstWhere(
       (c) => c.id == course.id,
@@ -133,14 +132,10 @@ class CourseDetailScreen extends ConsumerWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(20.0),
               decoration: BoxDecoration(
-                color: isDark
-                    ? const Color(0xFF2D1B4E)
-                    : AppColors.figmaPurpleCard,
+                color: AppColors.figmaPurpleCard,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: isDark
-                      ? const Color(0xFF6B21A8)
-                      : const Color(0xFF333333),
+                  color: const Color(0xFF333333),
                   width: 1,
                 ),
               ),
@@ -278,9 +273,7 @@ class CourseDetailScreen extends ConsumerWidget {
                 Text(
                   'Syllabus Topics (${currentCourse.topics.where((t) => t.isCompleted).length}/${currentCourse.topics.length})',
                   style: GoogleFonts.inter(
-                    color: isDark
-                        ? const Color(0xFFF472B6)
-                        : AppColors.figmaTextRed,
+                    color: AppColors.figmaTextRed,
                     fontSize: 17,
                     fontWeight: FontWeight.bold,
                   ),
@@ -288,8 +281,8 @@ class CourseDetailScreen extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: 6),
-            Divider(
-              color: isDark ? const Color(0xFF384358) : const Color(0xFFA69090),
+            const Divider(
+              color: Color(0xFFA69090),
               thickness: 1,
             ),
             const SizedBox(height: 12),
@@ -315,20 +308,12 @@ class CourseDetailScreen extends ConsumerWidget {
                         vertical: 14,
                       ),
                       decoration: BoxDecoration(
-                        color: isDark
-                            ? (isAlt
-                                  ? const Color(0xFF1E2822)
-                                  : const Color(0xFF26271A))
-                            : (isAlt
-                                  ? AppColors.figmaOliveTopic
-                                  : AppColors.figmaGreenTopic),
+                        color: isAlt
+                            ? AppColors.figmaOliveTopic
+                            : AppColors.figmaGreenTopic,
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
-                          color: isDark
-                              ? (isAlt
-                                    ? const Color(0xFF3F6212)
-                                    : const Color(0xFF065F46))
-                              : const Color(0xFF333333),
+                          color: const Color(0xFF333333),
                           width: 1,
                         ),
                       ),

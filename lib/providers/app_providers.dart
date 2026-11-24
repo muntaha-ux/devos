@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/profile_model.dart';
@@ -22,21 +21,6 @@ final authRepositoryProvider = Provider<IAuthRepository>((ref) {
 // Supabase Database Repository Provider
 final databaseRepositoryProvider = Provider<SupabaseDatabaseRepository>((ref) {
   return SupabaseDatabaseRepository();
-});
-
-// Theme Mode Notifier
-class ThemeModeNotifier extends StateNotifier<ThemeMode> {
-  ThemeModeNotifier() : super(ThemeMode.dark);
-
-  void toggleTheme() {
-    state = state == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
-  }
-}
-
-final themeModeProvider = StateNotifierProvider<ThemeModeNotifier, ThemeMode>((
-  ref,
-) {
-  return ThemeModeNotifier();
 });
 
 // ===================== USER PROFILE PROVIDER =====================

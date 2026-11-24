@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import '../../core/constants/app_colors.dart';
 import '../../models/task_model.dart';
 import '../../providers/app_providers.dart';
@@ -12,7 +13,6 @@ class DashboardScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isDark = AppColors.isDark(context);
     final tasks = ref.watch(tasksProvider);
     final projects = ref.watch(projectsProvider);
     final courses = ref.watch(coursesProvider);
@@ -52,21 +52,12 @@ class DashboardScreen extends ConsumerWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(18.0),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF1E2433) : AppColors.figmaUrgentCard,
+                color: AppColors.figmaUrgentCard,
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                  color: isDark ? AppColors.accentRose.withValues(alpha: 0.6) : const Color(0xFFB8B8B8),
+                  color: const Color(0xFFB8B8B8),
                   width: 1.5,
                 ),
-                boxShadow: isDark
-                    ? [
-                        BoxShadow(
-                          color: AppColors.accentRose.withValues(alpha: 0.15),
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
-                        )
-                      ]
-                    : null,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,39 +65,44 @@ class DashboardScreen extends ConsumerWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        children: [
-                          Container(
-                            width: 8,
-                            height: 8,
-                            decoration: const BoxDecoration(
-                              color: AppColors.accentRose,
-                              shape: BoxShape.circle,
+                      Expanded(
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 8,
+                              height: 8,
+                              decoration: const BoxDecoration(
+                                color: AppColors.accentRose,
+                                shape: BoxShape.circle,
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            urgentTask?.priority == TaskPriority.urgent ? 'URGENT DEADLINE' : 'TOP PRIORITY TASK',
-                            style: GoogleFonts.jetBrainsMono(
-                              color: isDark ? const Color(0xFFF87171) : AppColors.figmaTextRed,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 0.5,
+                            const SizedBox(width: 8),
+                            Flexible(
+                              child: Text(
+                                urgentTask?.priority == TaskPriority.urgent ? 'URGENT DEADLINE' : 'TOP PRIORITY TASK',
+                                style: GoogleFonts.jetBrainsMono(
+                                  color: AppColors.figmaTextRed,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 0.5,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                       if (urgentTask != null && urgentTask.dueDate != null)
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
-                            color: isDark ? Colors.black45 : Colors.white.withValues(alpha: 0.7),
+                            color: Colors.white.withValues(alpha: 0.7),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
                             'Due in ${urgentTask.dueDate!.difference(DateTime.now()).inHours.abs()}h',
                             style: GoogleFonts.jetBrainsMono(
-                              color: isDark ? const Color(0xFFF472B6) : const Color(0xFFE11D48),
+                              color: const Color(0xFFE11D48),
                               fontSize: 11,
                               fontWeight: FontWeight.w700,
                             ),
@@ -118,7 +114,7 @@ class DashboardScreen extends ConsumerWidget {
                   Text(
                     urgentTask?.title ?? 'All current tasks completed!',
                     style: GoogleFonts.inter(
-                      color: isDark ? Colors.white : Colors.black,
+                      color: Colors.black,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -130,7 +126,7 @@ class DashboardScreen extends ConsumerWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.inter(
-                        color: isDark ? Colors.white70 : Colors.black87,
+                        color: Colors.black87,
                         fontSize: 13,
                       ),
                     ),
@@ -139,8 +135,8 @@ class DashboardScreen extends ConsumerWidget {
                   if (urgentTask != null)
                     ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: isDark ? const Color(0xFF38BDF8) : const Color(0xFF1E293B),
-                        foregroundColor: isDark ? Colors.black : Colors.white,
+                        backgroundColor: const Color(0xFF1E293B),
+                        foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                         elevation: 0,
@@ -169,7 +165,7 @@ class DashboardScreen extends ConsumerWidget {
                   else
                     OutlinedButton.icon(
                       style: OutlinedButton.styleFrom(
-                        side: BorderSide(color: isDark ? Colors.white30 : Colors.black26),
+                        side: const BorderSide(color: Colors.black26),
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                       ),
@@ -188,82 +184,46 @@ class DashboardScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
 
-            // 2x2 Metrics Grid with Green Code Badge
-            Stack(
-              clipBehavior: Clip.none,
+            // Quick Stats Metric Grid
+            Row(
               children: [
-                Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildMetricCard(
-                            context: context,
-                            label: 'Tasks Done',
-                            value: '$completedTasks/$totalTasks',
-                            onTap: () => onNavigateToTab(2),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _buildMetricCard(
-                            context: context,
-                            label: 'Learning Pulse',
-                            value: '$learningPulse%',
-                            onTap: () => onNavigateToTab(3),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildMetricCard(
-                            context: context,
-                            label: 'Active Tasks',
-                            value: '$activeTasksCount',
-                            onTap: () => onNavigateToTab(2),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _buildMetricCard(
-                            context: context,
-                            label: 'Hours Today',
-                            value: '$hoursToday Hours',
-                            onTap: () => onNavigateToTab(0),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                Expanded(
+                  child: _buildMetricCard(
+                    context: context,
+                    label: 'FOCUS HOURS',
+                    value: '$hoursToday h',
+                    onTap: () => onNavigateToTab(2), // Workload
+                  ),
                 ),
-                // Green floating </> badge at the bottom-right corner
-                Positioned(
-                  bottom: -10,
-                  right: 4,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: AppColors.figmaCodeBadge,
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.25),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Text(
-                      '</>',
-                      style: GoogleFonts.jetBrainsMono(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildMetricCard(
+                    context: context,
+                    label: 'ACTIVE TASKS',
+                    value: '$activeTasksCount',
+                    onTap: () => onNavigateToTab(2), // Workload
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildMetricCard(
+                    context: context,
+                    label: 'LEARNING PULSE',
+                    value: '$learningPulse%',
+                    onTap: () => onNavigateToTab(1), // Courses
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildMetricCard(
+                    context: context,
+                    label: 'FINISHED',
+                    value: '$completedTasks / $totalTasks',
+                    onTap: () => onNavigateToTab(2), // Workload
                   ),
                 ),
               ],
@@ -274,7 +234,7 @@ class DashboardScreen extends ConsumerWidget {
             Text(
               'Current Learning Project',
               style: GoogleFonts.inter(
-                color: isDark ? const Color(0xFFF472B6) : AppColors.figmaTextRed,
+                color: AppColors.figmaTextRed,
                 fontSize: 17,
                 fontWeight: FontWeight.bold,
               ),
@@ -289,10 +249,10 @@ class DashboardScreen extends ConsumerWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF1E1B2E) : AppColors.figmaLavenderCard,
+                  color: AppColors.figmaLavenderCard,
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
-                    color: isDark ? const Color(0xFF382F54) : const Color(0xFF333333),
+                    color: const Color(0xFF333333),
                     width: 1,
                   ),
                 ),
@@ -306,7 +266,7 @@ class DashboardScreen extends ConsumerWidget {
                           child: Text(
                             featuredProject?.title ?? 'DevOS Mobile & Architecture',
                             style: GoogleFonts.inter(
-                              color: isDark ? const Color(0xFFE9D5FF) : AppColors.figmaTextRed,
+                              color: AppColors.figmaTextRed,
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
@@ -316,7 +276,7 @@ class DashboardScreen extends ConsumerWidget {
                         Text(
                           '${featuredProject != null ? featuredProject.progressPercentage : 43}%',
                           style: GoogleFonts.jetBrainsMono(
-                            color: isDark ? const Color(0xFFC084FC) : const Color(0xFF7A0C16),
+                            color: const Color(0xFF7A0C16),
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                           ),
@@ -329,7 +289,7 @@ class DashboardScreen extends ConsumerWidget {
                           ? 'STATUS: ${featuredProject.status.toUpperCase().replaceAll('_', ' ')}'
                           : 'STAGE: Software & Architecture QA',
                       style: GoogleFonts.jetBrainsMono(
-                        color: isDark ? Colors.white70 : Colors.black87,
+                        color: Colors.black87,
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
                       ),
@@ -345,17 +305,17 @@ class DashboardScreen extends ConsumerWidget {
                         return Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
-                            color: isDark ? const Color(0xFF28233C) : Colors.white,
+                            color: Colors.white,
                             borderRadius: BorderRadius.circular(5),
                             border: Border.all(
-                              color: isDark ? const Color(0xFF581C87) : const Color(0xFF333333),
+                              color: const Color(0xFF333333),
                               width: 1,
                             ),
                           ),
                           child: Text(
                             tag,
                             style: GoogleFonts.jetBrainsMono(
-                              color: isDark ? const Color(0xFFE9D5FF) : Colors.black,
+                              color: Colors.black,
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
                             ),
@@ -371,7 +331,7 @@ class DashboardScreen extends ConsumerWidget {
                         height: 5,
                         child: Stack(
                           children: [
-                            Container(color: isDark ? const Color(0xFF28233C) : const Color(0xFF222222)),
+                            Container(color: const Color(0xFF222222)),
                             FractionallySizedBox(
                               widthFactor: ((featuredProject != null ? featuredProject.progressPercentage : 43).clamp(0, 100)) / 100.0,
                               child: Container(color: AppColors.figmaPink),
@@ -397,17 +357,16 @@ class DashboardScreen extends ConsumerWidget {
     required String value,
     required VoidCallback onTap,
   }) {
-    final isDark = AppColors.isDark(context);
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
       child: Container(
         padding: const EdgeInsets.all(14.0),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF161B22) : AppColors.figmaMetricCard,
+          color: AppColors.figmaMetricCard,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isDark ? const Color(0xFF30363D) : const Color(0xFF333333),
+            color: const Color(0xFF333333),
             width: 1,
           ),
         ),
@@ -417,7 +376,7 @@ class DashboardScreen extends ConsumerWidget {
             Text(
               label,
               style: GoogleFonts.jetBrainsMono(
-                color: isDark ? const Color(0xFFF87171) : AppColors.figmaTextRed,
+                color: AppColors.figmaTextRed,
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
               ),
@@ -426,7 +385,7 @@ class DashboardScreen extends ConsumerWidget {
             Text(
               value,
               style: GoogleFonts.inter(
-                color: isDark ? Colors.white : Colors.black,
+                color: Colors.black,
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
               ),

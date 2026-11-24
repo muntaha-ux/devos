@@ -30,7 +30,6 @@ class _CoursesScreenState extends ConsumerState<CoursesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = AppColors.isDark(context);
     final courses = ref.watch(coursesProvider);
 
     // Safeguard index
@@ -51,32 +50,34 @@ class _CoursesScreenState extends ConsumerState<CoursesScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Syllabus',
-                      style: GoogleFonts.inter(
-                        color: AppColors.textHeading(context),
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: -0.5,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Syllabus',
+                        style: GoogleFonts.inter(
+                          color: AppColors.textHeading(context),
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: -0.5,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      'Academic Term 2026',
-                      style: GoogleFonts.jetBrainsMono(
-                        color: AppColors.textSecondary(context),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
+                      const SizedBox(height: 2),
+                      Text(
+                        'Academic Term 2026',
+                        style: GoogleFonts.jetBrainsMono(
+                          color: AppColors.textSecondary(context),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: isDark ? const Color(0xFF2E6316) : AppColors.figmaForestBanner,
+                    backgroundColor: AppColors.figmaForestBanner,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -114,14 +115,10 @@ class _CoursesScreenState extends ConsumerState<CoursesScreen> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
-                            color: isSelected
-                                ? (isDark ? const Color(0xFF7C3AED) : AppColors.figmaPurpleCard)
-                                : (isDark ? const Color(0xFF1E2433) : Colors.white),
+                            color: isSelected ? AppColors.figmaPurpleCard : Colors.white,
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(
-                              color: isSelected
-                                  ? Colors.transparent
-                                  : (isDark ? const Color(0xFF384358) : const Color(0xFF333333)),
+                              color: isSelected ? Colors.transparent : const Color(0xFF333333),
                               width: 1,
                             ),
                           ),
@@ -129,7 +126,7 @@ class _CoursesScreenState extends ConsumerState<CoursesScreen> {
                             child: Text(
                               c.code,
                               style: GoogleFonts.jetBrainsMono(
-                                color: isSelected ? Colors.white : (isDark ? Colors.white70 : Colors.black87),
+                                color: isSelected ? Colors.white : Colors.black87,
                                 fontSize: 12,
                                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
                               ),
@@ -160,10 +157,10 @@ class _CoursesScreenState extends ConsumerState<CoursesScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(18.0),
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF2D1B4E) : AppColors.figmaPurpleCard,
+                    color: AppColors.figmaPurpleCard,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: isDark ? const Color(0xFF6B21A8) : const Color(0xFF333333),
+                      color: const Color(0xFF333333),
                       width: 1,
                     ),
                   ),
@@ -329,12 +326,15 @@ class _CoursesScreenState extends ConsumerState<CoursesScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Topics Outline',
-                  style: GoogleFonts.inter(
-                    color: isDark ? const Color(0xFFF472B6) : AppColors.figmaTextRed,
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Text(
+                    'Topics Outline',
+                    style: GoogleFonts.inter(
+                      color: AppColors.figmaTextRed,
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 if (activeCourse != null)
@@ -349,7 +349,7 @@ class _CoursesScreenState extends ConsumerState<CoursesScreen> {
               ],
             ),
             const SizedBox(height: 6),
-            Divider(color: isDark ? const Color(0xFF384358) : const Color(0xFFA69090), thickness: 1),
+            const Divider(color: Color(0xFFA69090), thickness: 1),
             const SizedBox(height: 12),
 
             // Real dynamic topic checklist
@@ -370,12 +370,8 @@ class _CoursesScreenState extends ConsumerState<CoursesScreen> {
                       context: context,
                       title: topic.title,
                       isCompleted: topic.isCompleted,
-                      backgroundColor: isDark
-                          ? (isAlt ? const Color(0xFF1E2822) : const Color(0xFF26271A))
-                          : (isAlt ? AppColors.figmaOliveTopic : AppColors.figmaGreenTopic),
-                      borderColor: isDark
-                          ? (isAlt ? const Color(0xFF3F6212) : const Color(0xFF065F46))
-                          : const Color(0xFF333333),
+                      backgroundColor: isAlt ? AppColors.figmaOliveTopic : AppColors.figmaGreenTopic,
+                      borderColor: const Color(0xFF333333),
                     ),
                   ),
                 );

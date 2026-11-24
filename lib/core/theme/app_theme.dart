@@ -1,94 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../constants/app_colors.dart';
 
+/// Central theme definition for DevOS.
+/// DevOS is a strictly single-theme (Light Only) application.
 class AppTheme {
-  static ThemeData get darkTheme {
-    return ThemeData(
-      useMaterial3: true,
-      brightness: Brightness.dark,
-      scaffoldBackgroundColor: AppColors.backgroundDark,
-      colorScheme: const ColorScheme.dark(
-        primary: AppColors.primary,
-        secondary: AppColors.secondary,
-        surface: AppColors.surfaceDark,
-        error: AppColors.accentRose,
-      ),
-      textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme)
-          .copyWith(
-            displayLarge: GoogleFonts.inter(
-              color: AppColors.textPrimaryDark,
-              fontWeight: FontWeight.bold,
-              fontSize: 32,
-            ),
-            headlineMedium: GoogleFonts.inter(
-              color: AppColors.textPrimaryDark,
-              fontWeight: FontWeight.w700,
-              fontSize: 22,
-            ),
-            titleLarge: GoogleFonts.inter(
-              color: AppColors.textPrimaryDark,
-              fontWeight: FontWeight.w600,
-              fontSize: 18,
-            ),
-            titleMedium: GoogleFonts.inter(
-              color: AppColors.textPrimaryDark,
-              fontWeight: FontWeight.w600,
-              fontSize: 15,
-            ),
-            bodyLarge: GoogleFonts.inter(
-              color: AppColors.textPrimaryDark,
-              fontSize: 14,
-            ),
-            bodyMedium: GoogleFonts.inter(
-              color: AppColors.textSecondaryDark,
-              fontSize: 13,
-            ),
-            labelSmall: GoogleFonts.jetBrainsMono(
-              color: AppColors.textMutedDark,
-              fontSize: 11,
-            ),
-          ),
-      cardTheme: CardThemeData(
-        color: AppColors.cardDark,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: const BorderSide(color: AppColors.cardBorderDark, width: 1),
-        ),
-      ),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.backgroundDark,
-        elevation: 0,
-        centerTitle: false,
-        iconTheme: IconThemeData(color: AppColors.textPrimaryDark),
-      ),
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.black,
-        elevation: 4,
-      ),
-      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: AppColors.surfaceDark,
-        selectedItemColor: AppColors.primary,
-        unselectedItemColor: AppColors.textMutedDark,
-        type: BottomNavigationBarType.fixed,
-        elevation: 8,
-      ),
-    );
-  }
+  AppTheme._();
 
-  static ThemeData get lightTheme {
+  /// Primary single theme for the DevOS workspace.
+  static ThemeData get theme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
       scaffoldBackgroundColor: AppColors.figmaBackground,
-      colorScheme: const ColorScheme.light(
+      colorScheme: const ColorScheme(
+        brightness: Brightness.light,
         primary: AppColors.figmaBlue,
+        onPrimary: Colors.white,
         secondary: AppColors.figmaCodeBadge,
+        onSecondary: Colors.white,
         surface: AppColors.figmaMetricCard,
+        onSurface: AppColors.textPrimaryLight,
         error: AppColors.accentRose,
+        onError: Colors.white,
       ),
       textTheme: GoogleFonts.interTextTheme(ThemeData.light().textTheme)
           .copyWith(
@@ -128,6 +64,7 @@ class AppTheme {
           ),
       cardTheme: CardThemeData(
         color: AppColors.figmaMetricCard,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -138,7 +75,8 @@ class AppTheme {
         backgroundColor: AppColors.figmaBackground,
         elevation: 0,
         centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.white),
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        iconTheme: IconThemeData(color: Colors.black87),
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: AppColors.figmaBottomNav,
@@ -149,4 +87,7 @@ class AppTheme {
       ),
     );
   }
+
+  /// Alias for backward compatibility with existing tests and callers.
+  static ThemeData get lightTheme => theme;
 }

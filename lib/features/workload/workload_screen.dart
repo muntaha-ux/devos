@@ -522,12 +522,15 @@ class _WorkloadScreenState extends ConsumerState<WorkloadScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'Categorized Tasks (${filteredTasks.length})',
-                    style: GoogleFonts.inter(
-                      color: AppColors.figmaTextRed,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: Text(
+                      'Categorized Tasks (${filteredTasks.length})',
+                      style: GoogleFonts.inter(
+                        color: AppColors.figmaTextRed,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   if (_stateFilter != TaskStateFilter.all ||
@@ -585,17 +588,16 @@ class _WorkloadScreenState extends ConsumerState<WorkloadScreen> {
     required Color valueColor,
     required VoidCallback onTap,
   }) {
-    final isDark = AppColors.isDark(context);
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 12.0),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF161B22) : AppColors.figmaMetricCard,
+          color: AppColors.figmaMetricCard,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isDark ? const Color(0xFF30363D) : const Color(0xFF333333),
+            color: const Color(0xFF333333),
             width: 1,
           ),
         ),
@@ -605,7 +607,7 @@ class _WorkloadScreenState extends ConsumerState<WorkloadScreen> {
             Text(
               label,
               style: GoogleFonts.jetBrainsMono(
-                color: isDark ? Colors.white70 : Colors.black87,
+                color: Colors.black87,
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
               ),
@@ -630,7 +632,6 @@ class _WorkloadScreenState extends ConsumerState<WorkloadScreen> {
     required int count,
     required TaskStateFilter filter,
   }) {
-    final isDark = AppColors.isDark(context);
     final isSelected = _stateFilter == filter;
     return InkWell(
       onTap: () => setState(() => _stateFilter = filter),
@@ -639,14 +640,12 @@ class _WorkloadScreenState extends ConsumerState<WorkloadScreen> {
         duration: const Duration(milliseconds: 180),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
         decoration: BoxDecoration(
-          color: isSelected
-              ? (isDark ? const Color(0xFF8F0030) : AppColors.figmaBottomNav)
-              : (isDark ? const Color(0xFF161B22) : Colors.white),
+          color: isSelected ? AppColors.figmaBottomNav : Colors.white,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: isSelected
                 ? AppColors.figmaBottomNav
-                : (isDark ? const Color(0xFF30363D) : const Color(0xFF333333)),
+                : const Color(0xFF333333),
             width: 1,
           ),
         ),
@@ -656,9 +655,7 @@ class _WorkloadScreenState extends ConsumerState<WorkloadScreen> {
             Text(
               label,
               style: GoogleFonts.jetBrainsMono(
-                color: isSelected
-                    ? Colors.white
-                    : (isDark ? Colors.white70 : Colors.black87),
+                color: isSelected ? Colors.white : Colors.black87,
                 fontSize: 12,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
               ),
@@ -669,17 +666,13 @@ class _WorkloadScreenState extends ConsumerState<WorkloadScreen> {
               decoration: BoxDecoration(
                 color: isSelected
                     ? Colors.white.withValues(alpha: 0.25)
-                    : (isDark
-                          ? const Color(0xFF21262D)
-                          : const Color(0xFFE5E7EB)),
+                    : const Color(0xFFE5E7EB),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
                 '$count',
                 style: GoogleFonts.jetBrainsMono(
-                  color: isSelected
-                      ? Colors.white
-                      : (isDark ? Colors.white70 : Colors.black87),
+                  color: isSelected ? Colors.white : Colors.black87,
                   fontSize: 10,
                   fontWeight: FontWeight.bold,
                 ),
@@ -696,7 +689,6 @@ class _WorkloadScreenState extends ConsumerState<WorkloadScreen> {
     required TaskCategoryFilter filter,
     IconData? icon,
   }) {
-    final isDark = AppColors.isDark(context);
     final isSelected = _categoryFilter == filter;
     return InkWell(
       onTap: () => setState(() => _categoryFilter = filter),
@@ -705,14 +697,10 @@ class _WorkloadScreenState extends ConsumerState<WorkloadScreen> {
         duration: const Duration(milliseconds: 180),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
-          color: isSelected
-              ? (isDark ? const Color(0xFF30363D) : AppColors.figmaCardDark)
-              : (isDark ? const Color(0xFF161B22) : Colors.white70),
+          color: isSelected ? AppColors.figmaCardDark : Colors.white70,
           borderRadius: BorderRadius.circular(6),
           border: Border.all(
-            color: isSelected
-                ? (isDark ? const Color(0xFF6E7681) : AppColors.figmaCardDark)
-                : (isDark ? const Color(0xFF30363D) : const Color(0xFF777777)),
+            color: isSelected ? AppColors.figmaCardDark : const Color(0xFF777777),
             width: 1,
           ),
         ),
@@ -723,18 +711,14 @@ class _WorkloadScreenState extends ConsumerState<WorkloadScreen> {
               Icon(
                 icon,
                 size: 13,
-                color: isSelected
-                    ? Colors.white
-                    : (isDark ? Colors.white70 : Colors.black87),
+                color: isSelected ? Colors.white : Colors.black87,
               ),
               const SizedBox(width: 4),
             ],
             Text(
               label,
               style: GoogleFonts.jetBrainsMono(
-                color: isSelected
-                    ? Colors.white
-                    : (isDark ? Colors.white70 : Colors.black87),
+                color: isSelected ? Colors.white : Colors.black87,
                 fontSize: 10,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
               ),
@@ -847,7 +831,6 @@ class _WorkloadScreenState extends ConsumerState<WorkloadScreen> {
   }
 
   Widget _buildTaskCard(DevTask task) {
-    final isDark = AppColors.isDark(context);
     final isDone = task.status == TaskStatus.completed;
     final isUrgent = task.priority == TaskPriority.urgent;
 
@@ -883,13 +866,13 @@ class _WorkloadScreenState extends ConsumerState<WorkloadScreen> {
       padding: const EdgeInsets.all(14.0),
       decoration: BoxDecoration(
         color: isUrgent && !isDone
-            ? (isDark ? const Color(0xFF2C1920) : AppColors.figmaUrgentCard)
-            : (isDark ? const Color(0xFF161B22) : AppColors.figmaMetricCard),
+            ? AppColors.figmaUrgentCard
+            : AppColors.figmaMetricCard,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isUrgent && !isDone
               ? const Color(0xFFC72836)
-              : (isDark ? const Color(0xFF30363D) : const Color(0xFF333333)),
+              : const Color(0xFF333333),
           width: isUrgent && !isDone ? 1.5 : 1,
         ),
       ),
@@ -897,110 +880,106 @@ class _WorkloadScreenState extends ConsumerState<WorkloadScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Top Row: Priority Badge, Status Pill, Due Date
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Wrap(
+            spacing: 8,
+            runSpacing: 6,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              Row(
-                children: [
-                  // Priority Badge
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 7,
-                      vertical: 3,
-                    ),
-                    decoration: BoxDecoration(
-                      color: priorityColor,
-                      borderRadius: BorderRadius.circular(4),
-                      border: Border.all(
-                        color: const Color(0xFF333333),
-                        width: 0.5,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(priorityIcon, size: 12, color: Colors.white),
-                        const SizedBox(width: 3),
-                        Text(
-                          priorityText,
-                          style: GoogleFonts.jetBrainsMono(
-                            color: Colors.white,
-                            fontSize: 9,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
+              // Priority Badge
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 7,
+                  vertical: 3,
+                ),
+                decoration: BoxDecoration(
+                  color: priorityColor,
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(
+                    color: const Color(0xFF333333),
+                    width: 0.5,
                   ),
-                  const SizedBox(width: 6),
-
-                  // State Pill
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 3,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isDone
-                          ? AppColors.figmaCodeBadge
-                          : (task.status == TaskStatus.inProgress
-                                ? AppColors.figmaPurpleCard
-                                : (isDark
-                                      ? const Color(0xFF21262D)
-                                      : Colors.white)),
-                      borderRadius: BorderRadius.circular(4),
-                      border: Border.all(
-                        color: isDark
-                            ? const Color(0xFF30363D)
-                            : const Color(0xFF333333),
-                        width: 0.5,
-                      ),
-                    ),
-                    child: Text(
-                      isDone
-                          ? 'DONE'
-                          : (task.status == TaskStatus.inProgress
-                                ? 'IN PROGRESS'
-                                : 'TO DO'),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(priorityIcon, size: 12, color: Colors.white),
+                    const SizedBox(width: 3),
+                    Text(
+                      priorityText,
                       style: GoogleFonts.jetBrainsMono(
-                        color: isDone || task.status == TaskStatus.inProgress
-                            ? Colors.white
-                            : (isDark ? Colors.white70 : Colors.black87),
+                        color: Colors.white,
                         fontSize: 9,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                  ],
+                ),
+              ),
+
+              // State Pill
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 6,
+                  vertical: 3,
+                ),
+                decoration: BoxDecoration(
+                  color: isDone
+                      ? AppColors.figmaCodeBadge
+                      : (task.status == TaskStatus.inProgress
+                            ? AppColors.figmaPurpleCard
+                            : Colors.white),
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(
+                    color: const Color(0xFF333333),
+                    width: 0.5,
                   ),
-                ],
+                ),
+                child: Text(
+                  isDone
+                      ? 'DONE'
+                      : (task.status == TaskStatus.inProgress
+                            ? 'IN PROGRESS'
+                            : 'TO DO'),
+                  style: GoogleFonts.jetBrainsMono(
+                    color: isDone || task.status == TaskStatus.inProgress
+                        ? Colors.white
+                        : Colors.black87,
+                    fontSize: 9,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
 
               // Due Date indicator
               if (task.dueDate != null)
-                Row(
-                  children: [
-                    Icon(
-                      Icons.schedule_rounded,
-                      size: 13,
-                      color: isUrgent && !isDone
-                          ? (isDark
-                                ? const Color(0xFFF87171)
-                                : AppColors.figmaTextRed)
-                          : (isDark ? Colors.white60 : Colors.black54),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      _formatDueText(task.dueDate!),
-                      style: GoogleFonts.jetBrainsMono(
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 270),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.schedule_rounded,
+                        size: 13,
                         color: isUrgent && !isDone
-                            ? (isDark
-                                  ? const Color(0xFFF87171)
-                                  : AppColors.figmaTextRed)
-                            : (isDark ? Colors.white60 : Colors.black54),
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
+                            ? AppColors.figmaTextRed
+                            : Colors.black54,
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 4),
+                      Flexible(
+                        child: Text(
+                          _formatDueText(task.dueDate!),
+                          style: GoogleFonts.jetBrainsMono(
+                            color: isUrgent && !isDone
+                                ? AppColors.figmaTextRed
+                                : Colors.black54,
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
             ],
           ),
@@ -1010,9 +989,7 @@ class _WorkloadScreenState extends ConsumerState<WorkloadScreen> {
           Text(
             task.title,
             style: GoogleFonts.inter(
-              color: isDone
-                  ? (isDark ? Colors.white38 : Colors.black45)
-                  : (isDark ? Colors.white : Colors.black),
+              color: isDone ? Colors.black45 : Colors.black,
               fontSize: 16,
               fontWeight: FontWeight.bold,
               decoration: isDone ? TextDecoration.lineThrough : null,
@@ -1025,9 +1002,7 @@ class _WorkloadScreenState extends ConsumerState<WorkloadScreen> {
             Text(
               task.description,
               style: GoogleFonts.inter(
-                color: isDone
-                    ? (isDark ? Colors.white24 : Colors.black38)
-                    : (isDark ? Colors.white70 : Colors.black87),
+                color: isDone ? Colors.black38 : Colors.black87,
                 fontSize: 12,
               ),
               maxLines: 2,
@@ -1042,34 +1017,27 @@ class _WorkloadScreenState extends ConsumerState<WorkloadScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: const Color(0xFF2E805F)
-                    .withValues(alpha: isDark ? 0.3 : 0.15),
+                color: const Color(0xFF2E805F).withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(5),
                 border: Border.all(
-                  color: isDark
-                      ? const Color(0xFF34D399)
-                      : const Color(0xFF2E805F),
+                  color: const Color(0xFF2E805F),
                   width: 1,
                 ),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.school_rounded,
                     size: 14,
-                    color: isDark
-                        ? const Color(0xFF34D399)
-                        : const Color(0xFF1B5E20),
+                    color: Color(0xFF1B5E20),
                   ),
                   const SizedBox(width: 6),
                   Flexible(
                     child: Text(
                       'Course: ${task.relatedCourseName}',
                       style: GoogleFonts.jetBrainsMono(
-                        color: isDark
-                            ? const Color(0xFF86EFAC)
-                            : const Color(0xFF1B5E20),
+                        color: const Color(0xFF1B5E20),
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
                       ),
@@ -1084,25 +1052,20 @@ class _WorkloadScreenState extends ConsumerState<WorkloadScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: const Color(0xFF672EC9)
-                    .withValues(alpha: isDark ? 0.3 : 0.15),
+                color: const Color(0xFF672EC9).withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(5),
                 border: Border.all(
-                  color: isDark
-                      ? const Color(0xFFA78BFA)
-                      : const Color(0xFF672EC9),
+                  color: const Color(0xFF672EC9),
                   width: 1,
                 ),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.alt_route_rounded,
                     size: 14,
-                    color: isDark
-                        ? const Color(0xFFA78BFA)
-                        : const Color(0xFF4A148C),
+                    color: Color(0xFF4A148C),
                   ),
                   const SizedBox(width: 6),
                   Flexible(
@@ -1128,50 +1091,55 @@ class _WorkloadScreenState extends ConsumerState<WorkloadScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               // Toggle Done/Pending Button
-              InkWell(
-                onTap: () {
-                  if (ref.read(tasksProvider).isEmpty) {
-                    final fallbacks = _buildFallbackTasks();
-                    for (final t in fallbacks) {
-                      ref.read(tasksProvider.notifier).addTask(t);
+              Flexible(
+                child: InkWell(
+                  onTap: () {
+                    if (ref.read(tasksProvider).isEmpty) {
+                      final fallbacks = _buildFallbackTasks();
+                      for (final t in fallbacks) {
+                        ref.read(tasksProvider.notifier).addTask(t);
+                      }
                     }
-                  }
-                  ref.read(tasksProvider.notifier).toggleTaskStatus(task.id);
-                },
-                borderRadius: BorderRadius.circular(6),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 5,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isDone ? Colors.white : AppColors.figmaCodeBadge,
-                    borderRadius: BorderRadius.circular(6),
-                    border: Border.all(
-                      color: const Color(0xFF333333),
-                      width: 1,
+                    ref.read(tasksProvider.notifier).toggleTaskStatus(task.id);
+                  },
+                  borderRadius: BorderRadius.circular(6),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 5,
                     ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        isDone
-                            ? Icons.replay_rounded
-                            : Icons.check_circle_outline_rounded,
-                        size: 15,
-                        color: isDone ? Colors.black87 : Colors.white,
+                    decoration: BoxDecoration(
+                      color: isDone ? Colors.white : AppColors.figmaCodeBadge,
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(
+                        color: const Color(0xFF333333),
+                        width: 1,
                       ),
-                      const SizedBox(width: 5),
-                      Text(
-                        isDone ? 'Reopen' : 'Mark Done',
-                        style: GoogleFonts.jetBrainsMono(
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          isDone
+                              ? Icons.replay_rounded
+                              : Icons.check_circle_outline_rounded,
+                          size: 15,
                           color: isDone ? Colors.black87 : Colors.white,
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 5),
+                        Flexible(
+                          child: Text(
+                            isDone ? 'Reopen' : 'Mark Done',
+                            style: GoogleFonts.jetBrainsMono(
+                              color: isDone ? Colors.black87 : Colors.white,
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

@@ -12,16 +12,14 @@ import 'package:devos/features/notes/notes_screen.dart';
 
 Widget buildTestableScreen({
   required Widget screen,
-  ThemeMode mode = ThemeMode.light,
   double textScale = 1.0,
   Size size = const Size(412, 915),
 }) {
   return ProviderScope(
     child: MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: mode,
+      theme: AppTheme.theme,
+      themeMode: ThemeMode.light,
       home: MediaQuery(
         data: MediaQueryData(
           size: size,
@@ -30,7 +28,9 @@ Widget buildTestableScreen({
         child: SizedBox(
           width: size.width,
           height: size.height,
-          child: screen,
+          child: Material(
+            child: screen,
+          ),
         ),
       ),
     ),

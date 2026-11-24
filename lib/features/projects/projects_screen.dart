@@ -42,7 +42,6 @@ class _ProjectsScreenState extends ConsumerState<ProjectsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = AppColors.isDark(context);
     final allProjects = ref.watch(projectsProvider);
     final allTasks = ref.watch(tasksProvider);
 
@@ -88,14 +87,10 @@ class _ProjectsScreenState extends ConsumerState<ProjectsScreen> {
                 vertical: 12.0,
               ),
               decoration: BoxDecoration(
-                color: isDark
-                    ? const Color(0xFF1E1433)
-                    : AppColors.figmaDarkPurpleBanner,
+                color: AppColors.figmaDarkPurpleBanner,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: isDark
-                      ? const Color(0xFF4C1D95)
-                      : const Color(0xFF333333),
+                  color: const Color(0xFF333333),
                   width: 1,
                 ),
               ),
@@ -249,19 +244,13 @@ class _ProjectsScreenState extends ConsumerState<ProjectsScreen> {
                           ),
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? (isDark
-                                      ? const Color(0xFFEA580C)
-                                      : AppColors.figmaOrangeCard)
-                                : (isDark
-                                      ? const Color(0xFF1E2433)
-                                      : Colors.white),
+                                ? AppColors.figmaOrangeCard
+                                : Colors.white,
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(
                               color: isSelected
                                   ? Colors.transparent
-                                  : (isDark
-                                        ? const Color(0xFF384358)
-                                        : const Color(0xFF333333)),
+                                  : const Color(0xFF333333),
                               width: 1,
                             ),
                           ),
@@ -271,9 +260,7 @@ class _ProjectsScreenState extends ConsumerState<ProjectsScreen> {
                               style: GoogleFonts.jetBrainsMono(
                                 color: isSelected
                                     ? Colors.white
-                                    : (isDark
-                                          ? Colors.white70
-                                          : Colors.black87),
+                                    : Colors.black87,
                                 fontSize: 12,
                                 fontWeight: isSelected
                                     ? FontWeight.bold
@@ -307,14 +294,10 @@ class _ProjectsScreenState extends ConsumerState<ProjectsScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(18.0),
                   decoration: BoxDecoration(
-                    color: isDark
-                        ? const Color(0xFF2E1A11)
-                        : AppColors.figmaOrangeCard,
+                    color: AppColors.figmaOrangeCard,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: isDark
-                          ? const Color(0xFFC2410C)
-                          : const Color(0xFF333333),
+                      color: const Color(0xFF333333),
                       width: 1,
                     ),
                   ),
@@ -383,9 +366,7 @@ class _ProjectsScreenState extends ConsumerState<ProjectsScreen> {
                               vertical: 10,
                             ),
                             decoration: BoxDecoration(
-                              color: isDark
-                                  ? const Color(0xFF1E2816)
-                                  : AppColors.figmaPipelineGreen,
+                              color: AppColors.figmaPipelineGreen,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Column(
@@ -501,16 +482,18 @@ class _ProjectsScreenState extends ConsumerState<ProjectsScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'OnGoing Tasks & Milestones',
-                  style: GoogleFonts.inter(
-                    color: isDark
-                        ? const Color(0xFFF472B6)
-                        : const Color(0xFF9E1724),
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Text(
+                    'Milestones',
+                    style: GoogleFonts.inter(
+                      color: const Color(0xFF9E1724),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
+                const SizedBox(width: 8),
                 Text(
                   '${projectTasks.length} Tasks',
                   style: GoogleFonts.jetBrainsMono(
@@ -522,8 +505,8 @@ class _ProjectsScreenState extends ConsumerState<ProjectsScreen> {
               ],
             ),
             const SizedBox(height: 6),
-            Divider(
-              color: isDark ? const Color(0xFF384358) : const Color(0xFFA69090),
+            const Divider(
+              color: Color(0xFFA69090),
               thickness: 1,
             ),
             const SizedBox(height: 12),
@@ -560,16 +543,10 @@ class _ProjectsScreenState extends ConsumerState<ProjectsScreen> {
                       repo: task.relatedProjectName != null
                           ? 'project: ${task.relatedProjectName}'
                           : 'general engineering',
-                      repoColor: isDark
-                          ? Colors.white70
-                          : const Color(0xFFEDE9FE),
+                      repoColor: const Color(0xFFEDE9FE),
                       backgroundColor: isDone
-                          ? (isDark
-                                ? const Color(0xFF1E2822)
-                                : AppColors.figmaSprintSlate)
-                          : (isDark
-                                ? const Color(0xFF261E38)
-                                : AppColors.figmaSprintPurple),
+                          ? AppColors.figmaSprintSlate
+                          : AppColors.figmaSprintPurple,
                       isCrossed: isDone,
                     ),
                   ),
@@ -600,12 +577,8 @@ class _ProjectsScreenState extends ConsumerState<ProjectsScreen> {
                         repo: 'Target: ${m.targetDate}',
                         repoColor: Colors.white70,
                         backgroundColor: m.isCompleted
-                            ? (isDark
-                                  ? const Color(0xFF1E2822)
-                                  : AppColors.figmaSprintSlate)
-                            : (isDark
-                                  ? const Color(0xFF1E2433)
-                                  : AppColors.figmaSprintRust),
+                            ? AppColors.figmaSprintSlate
+                            : AppColors.figmaSprintRust,
                         isCrossed: m.isCompleted,
                       ),
                     ),
@@ -714,9 +687,7 @@ class _ProjectsScreenState extends ConsumerState<ProjectsScreen> {
         color: backgroundColor,
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color: AppColors.isDark(context)
-              ? Colors.white12
-              : const Color(0xFF333333),
+          color: const Color(0xFF333333),
           width: 1,
         ),
       ),

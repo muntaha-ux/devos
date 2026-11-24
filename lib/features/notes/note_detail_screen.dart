@@ -116,7 +116,7 @@ class _NoteDetailScreenState extends ConsumerState<NoteDetailScreen> {
 
     if (_isZenMode) {
       return Scaffold(
-        backgroundColor: const Color(0xFF1E2026),
+        backgroundColor: const Color(0xFFFAF9F6),
         body: SafeArea(
           child: Stack(
             children: [
@@ -135,7 +135,7 @@ class _NoteDetailScreenState extends ConsumerState<NoteDetailScreen> {
                         Text(
                           freshNote.title,
                           style: GoogleFonts.spaceGrotesk(
-                            color: Colors.white,
+                            color: Colors.black,
                             fontSize: 26,
                             fontWeight: FontWeight.bold,
                           ),
@@ -149,13 +149,13 @@ class _NoteDetailScreenState extends ConsumerState<NoteDetailScreen> {
                                 vertical: 3,
                               ),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF2C313C),
+                                color: const Color(0xFFE2E8F0),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
                                 freshNote.category,
                                 style: GoogleFonts.jetBrainsMono(
-                                  color: const Color(0xFF38BDF8),
+                                  color: const Color(0xFF0369A1),
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -165,7 +165,7 @@ class _NoteDetailScreenState extends ConsumerState<NoteDetailScreen> {
                             Text(
                               'ZEN MODE ACTIVE',
                               style: GoogleFonts.jetBrainsMono(
-                                color: Colors.white38,
+                                color: Colors.black54,
                                 fontSize: 10,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -173,14 +173,11 @@ class _NoteDetailScreenState extends ConsumerState<NoteDetailScreen> {
                           ],
                         ),
                         const SizedBox(height: 16),
-                        const Divider(color: Color(0xFF3A3F4B), thickness: 1),
+                        const Divider(color: Color(0xFFCBD5E1), thickness: 1),
                         const SizedBox(height: 16),
-                        Theme(
-                          data: ThemeData.dark(),
-                          child: MarkdownRenderer(
-                            content: freshNote.content,
-                            isZenMode: true,
-                          ),
+                        MarkdownRenderer(
+                          content: freshNote.content,
+                          isZenMode: true,
                         ),
                         const SizedBox(height: 80),
                       ],
@@ -201,9 +198,9 @@ class _NoteDetailScreenState extends ConsumerState<NoteDetailScreen> {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF2D323F),
+                      color: const Color(0xFF1E293B),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.white24, width: 1),
+                      border: Border.all(color: const Color(0xFF334155), width: 1),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,

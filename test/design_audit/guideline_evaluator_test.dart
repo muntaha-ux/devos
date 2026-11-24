@@ -8,13 +8,12 @@ import 'package:devos/features/dashboard/dashboard_screen.dart';
 import 'package:devos/features/workload/workload_screen.dart';
 import 'package:devos/features/notes/notes_screen.dart';
 
-Widget wrapWithMaterial(Widget child, {ThemeMode mode = ThemeMode.light}) {
+Widget wrapWithMaterial(Widget child) {
   return ProviderScope(
     child: MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: mode,
+      theme: AppTheme.theme,
+      themeMode: ThemeMode.light,
       home: Scaffold(body: child),
     ),
   );

@@ -78,7 +78,6 @@ class ProjectDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isDark = AppColors.isDark(context);
     final projects = ref.watch(projectsProvider);
     final currentProject = projects.firstWhere(
       (p) => p.id == project.id,
@@ -135,14 +134,10 @@ class ProjectDetailScreen extends ConsumerWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(20.0),
               decoration: BoxDecoration(
-                color: isDark
-                    ? const Color(0xFF2E1A11)
-                    : AppColors.figmaOrangeCard,
+                color: AppColors.figmaOrangeCard,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: isDark
-                      ? const Color(0xFFC2410C)
-                      : const Color(0xFF333333),
+                  color: const Color(0xFF333333),
                   width: 1,
                 ),
               ),
@@ -306,9 +301,7 @@ class ProjectDetailScreen extends ConsumerWidget {
                 Text(
                   'Project Milestones (${currentProject.milestones.where((m) => m.isCompleted).length}/${currentProject.milestones.length})',
                   style: GoogleFonts.inter(
-                    color: isDark
-                        ? const Color(0xFFF472B6)
-                        : AppColors.figmaTextRed,
+                    color: AppColors.figmaTextRed,
                     fontSize: 17,
                     fontWeight: FontWeight.bold,
                   ),
@@ -316,8 +309,8 @@ class ProjectDetailScreen extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: 6),
-            Divider(
-              color: isDark ? const Color(0xFF384358) : const Color(0xFFA69090),
+            const Divider(
+              color: Color(0xFFA69090),
               thickness: 1,
             ),
             const SizedBox(height: 12),
@@ -340,17 +333,11 @@ class ProjectDetailScreen extends ConsumerWidget {
                       ),
                       decoration: BoxDecoration(
                         color: milestone.isCompleted
-                            ? (isDark
-                                  ? const Color(0xFF1E2822)
-                                  : AppColors.figmaSprintSlate)
-                            : (isDark
-                                  ? const Color(0xFF1E2433)
-                                  : AppColors.figmaSprintRust),
+                            ? AppColors.figmaSprintSlate
+                            : AppColors.figmaSprintRust,
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
-                          color: isDark
-                              ? Colors.white12
-                              : const Color(0xFF333333),
+                          color: const Color(0xFF333333),
                           width: 1,
                         ),
                       ),

@@ -32,19 +32,16 @@ void main() async {
   runApp(const ProviderScope(child: DevOSApp()));
 }
 
-class DevOSApp extends ConsumerWidget {
+class DevOSApp extends StatelessWidget {
   const DevOSApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final themeMode = ref.watch(themeModeProvider);
-
+  Widget build(BuildContext context) {
     return MaterialApp(
       title: 'DevOS',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: themeMode,
+      theme: AppTheme.theme,
+      themeMode: ThemeMode.light,
       home: const AuthWrapper(),
     );
   }
@@ -145,9 +142,6 @@ class _DevOSMainShellState extends ConsumerState<DevOSMainShell> {
 
   @override
   Widget build(BuildContext context) {
-    final themeMode = ref.watch(themeModeProvider);
-    final isDark = themeMode == ThemeMode.dark;
-
     final profile = ref.watch(profileProvider);
 
     final pages = [
@@ -211,7 +205,7 @@ class _DevOSMainShellState extends ConsumerState<DevOSMainShell> {
               title: Text(
                 'DevOS',
                 style: GoogleFonts.jetBrainsMono(
-                  color: isDark ? const Color(0xFF60A5FA) : AppColors.figmaBlue,
+                  color: AppColors.figmaBlue,
                   fontWeight: FontWeight.w900,
                   fontSize: 22,
                   letterSpacing: 3.5,
@@ -281,14 +275,10 @@ class _DevOSMainShellState extends ConsumerState<DevOSMainShell> {
                         height: 44,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color: isDark
-                              ? AppColors.surfaceDark
-                              : AppColors.figmaCardDark,
+                          color: AppColors.figmaCardDark,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: isDark
-                                ? AppColors.cardBorderDark
-                                : Colors.transparent,
+                            color: Colors.transparent,
                           ),
                         ),
                         child: const Icon(
@@ -304,17 +294,13 @@ class _DevOSMainShellState extends ConsumerState<DevOSMainShell> {
             )
           : null,
       drawer: Drawer(
-        backgroundColor: isDark
-            ? AppColors.surfaceDark
-            : AppColors.surfaceLight,
+        backgroundColor: AppColors.surfaceLight,
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
             UserAccountsDrawerHeader(
-              decoration: BoxDecoration(
-                color: isDark
-                    ? const Color(0xFF0F141C)
-                    : AppColors.backgroundDark,
+              decoration: const BoxDecoration(
+                color: AppColors.brandDarkBanner,
               ),
               accountName: Text(
                 profile.fullName,
@@ -357,33 +343,6 @@ class _DevOSMainShellState extends ConsumerState<DevOSMainShell> {
               5,
               'Notes & Knowledge Base',
               Icons.menu_book_rounded,
-            ),
-            const Divider(),
-            ListTile(
-              leading: Icon(
-                isDark ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
-                color: isDark
-                    ? const Color(0xFFFBBF24)
-                    : AppColors.textPrimaryLight,
-              ),
-              title: Text(
-                isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode',
-                style: TextStyle(
-                  color: isDark
-                      ? AppColors.textPrimaryDark
-                      : AppColors.textPrimaryLight,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              trailing: Switch.adaptive(
-                value: isDark,
-                onChanged: (val) {
-                  ref.read(themeModeProvider.notifier).toggleTheme();
-                },
-              ),
-              onTap: () {
-                ref.read(themeModeProvider.notifier).toggleTheme();
-              },
             ),
             const Divider(),
             ListTile(
@@ -478,12 +437,12 @@ class _DevOSMainShellState extends ConsumerState<DevOSMainShell> {
     return ListTile(
       leading: Icon(
         icon,
-        color: isSelected ? AppColors.primary : AppColors.textMutedDark,
+        color: isSelected ? AppColors.primary : AppColors.textMutedLight,
       ),
       title: Text(
         title,
         style: TextStyle(
-          color: isSelected ? AppColors.primary : AppColors.textPrimaryDark,
+          color: isSelected ? AppColors.primary : AppColors.textPrimaryLight,
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
         ),
       ),

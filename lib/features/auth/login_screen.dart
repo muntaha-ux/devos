@@ -572,12 +572,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               color: isSelected ? Colors.white : Colors.white70,
             ),
             const SizedBox(width: 6),
-            Text(
-              label,
-              style: GoogleFonts.jetBrainsMono(
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                fontSize: 12,
-                color: isSelected ? Colors.white : Colors.white70,
+            Flexible(
+              child: Text(
+                label,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.jetBrainsMono(
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                  fontSize: 12,
+                  color: isSelected ? Colors.white : Colors.white70,
+                ),
               ),
             ),
           ],
@@ -723,13 +726,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           color: Colors.white,
                         ),
                         const SizedBox(width: 8),
-                        Text(
-                          'LAUNCH DASHBOARD',
-                          style: GoogleFonts.jetBrainsMono(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 13,
-                            letterSpacing: 0.5,
-                            color: Colors.white,
+                        Flexible(
+                          child: Text(
+                            'LAUNCH DASHBOARD',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.jetBrainsMono(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                              letterSpacing: 0.5,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ],
@@ -1071,13 +1078,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           color: Colors.white,
                         ),
                         const SizedBox(width: 8),
-                        Text(
-                          'CREATE DEVOS ACCOUNT',
-                          style: GoogleFonts.jetBrainsMono(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 13,
-                            letterSpacing: 0.5,
-                            color: Colors.white,
+                        Flexible(
+                          child: Text(
+                            'CREATE DEVOS ACCOUNT',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.jetBrainsMono(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                              letterSpacing: 0.5,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ],
