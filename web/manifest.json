@@ -1,6 +1,6 @@
 {
-    "name": "devos",
-    "short_name": "devos",
+    "name": "DevOS - Engineering Workspace",
+    "short_name": "DevOS",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#D6BDBD",
