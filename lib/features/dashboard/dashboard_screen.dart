@@ -192,7 +192,7 @@ class DashboardScreen extends ConsumerWidget {
                     context: context,
                     label: 'FOCUS HOURS',
                     value: '$hoursToday h',
-                    onTap: () => onNavigateToTab(2), // Workload
+                    onTap: () => onNavigateToTab(7), // Analytics
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -339,6 +339,161 @@ class DashboardScreen extends ConsumerWidget {
                           ],
                         ),
                       ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // Section: Productivity & Academic Pulse
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Productivity & Analytics Pulse',
+                  style: GoogleFonts.inter(
+                    color: AppColors.figmaTextRed,
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => onNavigateToTab(7),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'View All',
+                        style: GoogleFonts.jetBrainsMono(
+                          color: AppColors.figmaBlue,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 2),
+                      const Icon(Icons.arrow_forward_rounded, size: 14, color: AppColors.figmaBlue),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+
+            // Productivity Summary Banner Card
+            InkWell(
+              onTap: () => onNavigateToTab(7),
+              borderRadius: BorderRadius.circular(14),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: AppColors.brandDarkBanner,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: const Color(0xFF222222),
+                    width: 1.5,
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            const Text('🔥', style: TextStyle(fontSize: 18)),
+                            const SizedBox(width: 8),
+                            Text(
+                              'DAILY CODING & LEARNING STREAK',
+                              style: GoogleFonts.jetBrainsMono(
+                                color: const Color(0xFFF3C7D4),
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.6,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: AppColors.figmaCodeBadge.withValues(alpha: 0.25),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(color: AppColors.figmaCodeBadge, width: 1),
+                          ),
+                          child: Text(
+                            '94/100 VELOCITY',
+                            style: GoogleFonts.jetBrainsMono(
+                              color: const Color(0xFF4ADE80),
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      'Contribution Matrix & Focus Tracking',
+                      style: GoogleFonts.inter(
+                        color: Colors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Daily coding activity, active streak shield, weekly/monthly domain statistics & focus charts.',
+                      style: GoogleFonts.inter(
+                        color: Colors.white70,
+                        fontSize: 12,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              width: 8,
+                              height: 8,
+                              decoration: const BoxDecoration(
+                                color: AppColors.figmaCodeBadge,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              'Active Today • 168 Contributions',
+                              style: GoogleFonts.jetBrainsMono(
+                                color: Colors.white60,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'Open Analytics',
+                              style: GoogleFonts.jetBrainsMono(
+                                color: const Color(0xFFF3C7D4),
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            const Icon(
+                              Icons.arrow_forward_rounded,
+                              size: 14,
+                              color: Color(0xFFF3C7D4),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ],
                 ),

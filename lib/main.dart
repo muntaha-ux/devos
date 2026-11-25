@@ -19,6 +19,7 @@ import 'features/notes/notes_screen.dart';
 import 'features/skills/skills_screen.dart';
 import 'features/projects/projects_screen.dart';
 import 'features/profile/profile_screen.dart';
+import 'features/analytics/analytics_screen.dart';
 import 'features/search/global_search_modal.dart';
 
 void main() async {
@@ -219,6 +220,10 @@ class _DevOSMainShellState extends ConsumerState<DevOSMainShell> {
         onBackToDashboard: () => setState(() => _currentIndex = 0),
         onLogout: widget.onLogout,
       ),
+      AnalyticsScreen(
+        onBackToDashboard: () => setState(() => _currentIndex = 0),
+        onNavigateToTab: (index) => setState(() => _currentIndex = index),
+      ),
     ];
 
     final showDevOSTopBar = _currentIndex == 0 || _currentIndex == 1;
@@ -356,6 +361,11 @@ class _DevOSMainShellState extends ConsumerState<DevOSMainShell> {
               6,
               'Engineering Profile',
               Icons.account_circle_outlined,
+            ),
+            _buildDrawerTile(
+              7,
+              'Productivity & Analytics',
+              Icons.insights_rounded,
             ),
             const Divider(),
             ListTile(
